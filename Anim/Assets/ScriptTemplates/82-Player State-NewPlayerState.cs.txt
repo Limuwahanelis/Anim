@@ -1,0 +1,21 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class #SCRIPTNAME# : PlayerState
+{
+    public #SCRIPTNAME#(PlayerContext context) : base(context)
+    {
+
+    }
+
+    public override void Update()
+    {
+
+    }
+
+    public override void SetUpState()
+    {
+
+    }
+}
