@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class #SCRIPTNAME# : PlayerState
+public class PlayerAttackingState : PlayerState
 {
-    public #SCRIPTNAME#(PlayerContext context) : base(context)
+    public PlayerAttackingState(PlayerContext context) : base(context)
     {
 
     }

@@ -10,5 +10,6 @@ public class PlayerContext
     public PlayerMovement playerMovement;
     public Action<PlayerState> ChangePlayerState;
     public PlayerChecks playerChecks;
+    public CorutineHolder corutineHolder;
 
 }

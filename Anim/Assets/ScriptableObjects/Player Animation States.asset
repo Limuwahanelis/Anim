@@ -21,6 +21,4 @@ MonoBehaviour:
     duration: 1.0666667
   - name: Landing
     duration: 1.0666667
-  - name: New State
-    duration: 1.2
   animatorController: {fileID: 9100000, guid: 7f32f6cfbf66de845b55e5ed4284ba3f, type: 2}

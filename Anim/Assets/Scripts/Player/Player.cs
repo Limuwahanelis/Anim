@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     [SerializeField] AnimationManager _animManager;
     [SerializeField] PlayerMovement _playerMovement;
     [SerializeField] PlayerChecks _playerChecks;
+    [SerializeField] CorutineHolder _corutineHolder;
     private PlayerState _currentPlayerState;
     private PlayerContext _context;
     // Start is called before the first frame update
@@ -22,7 +23,8 @@ public class Player : MonoBehaviour
             playerMovement = _playerMovement,
             ChangePlayerState = ChangeState,
             animationManager = _animManager,
-            playerChecks = _playerChecks
+            playerChecks = _playerChecks,
+            corutineHolder = _corutineHolder
         };
         _currentPlayerState = new NormalPlayerState(_context);
     }

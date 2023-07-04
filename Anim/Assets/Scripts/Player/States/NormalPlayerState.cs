@@ -46,4 +46,8 @@ public class NormalPlayerState : PlayerState
     {
 
     }
+    public override void Attack()
+    {
+        _context.ChangePlayerState(new PlayerCombatState(_context));
+    }
 }

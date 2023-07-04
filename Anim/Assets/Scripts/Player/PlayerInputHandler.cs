@@ -40,6 +40,11 @@ public class PlayerInputHandler : MonoBehaviour
     }
     void OnFire(InputValue inputValue)
     {
-        teleportSkill.Perform();
+        if(_isFocused) teleportSkill.Perform();
+        else
+        {
+            _player.CurrentPlayerState.Attack();
+        }
+
     }
 }
