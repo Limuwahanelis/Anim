@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animations:
   - name: Movement
-    duration: 2.2222226
+    duration: 1.72963
   - name: Jump
     duration: 1.6666667
   - name: Fall loop

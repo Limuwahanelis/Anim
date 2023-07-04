@@ -35,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void Move(Vector2 direction)
     {
-        if (direction.y > 0) transform.Translate(Vector3.forward * direction.y*Time.deltaTime*_speed + Vector3.right * direction.x * Time.deltaTime * _speed);// _rb.velocity = new Vector3( direction.x * _speed, _rb.velocity.y, direction.y * _speed);
+        if (direction.y >= 0) transform.Translate(Vector3.forward * direction.y*Time.deltaTime*_speed + Vector3.right * direction.x * Time.deltaTime * _speed);// _rb.velocity = new Vector3( direction.x * _speed, _rb.velocity.y, direction.y * _speed);
         else  transform.Translate(Vector3.forward * direction.y * Time.deltaTime*_backMoveSpeed + Vector3.right * direction.x * Time.deltaTime * _backMoveSpeed);// new Vector3(direction.x * _backMoveSpeed, _rb.velocity.y, direction.y * _backMoveSpeed);
     }
     private void LateUpdate()

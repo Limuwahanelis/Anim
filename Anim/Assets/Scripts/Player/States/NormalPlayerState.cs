@@ -1,9 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class NormalPlayerState : PlayerState
 {
+    float _stoppingSpeedX = 1f;
+    float _stoppingSpeedZ = 1f;
+    float _accelerationSpeedX = 2f;
+    float _accelerationSpeedZ = 2f;
+    float animSpeedZ = 0;
+    float animSpeedX = 0;
     public NormalPlayerState(PlayerContext context) : base(context)
     {
 
@@ -20,21 +27,63 @@ public class NormalPlayerState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
-        float animSpeedZ = direction.y;
-        float animSpeedX = direction.x;
+        Debug.Log(direction);
+        if (direction.x == 0)
+        {
+            if (animSpeedX > 0)
+            {
+                animSpeedX -= _stoppingSpeedX * Time.deltaTime;
+                animSpeedX = math.clamp(animSpeedX, 0, 1);
+            }
+            else
+            {
+                animSpeedX += _stoppingSpeedX * Time.deltaTime;
+                animSpeedX = math.clamp(animSpeedX, -1, 0);
+            }
+        }
+        else
+        {
+            if (direction.x > 0)
+            {
+                animSpeedX += _accelerationSpeedX * Time.deltaTime;
+                animSpeedX = math.clamp(animSpeedX, -1, 1);
+            }
+            else
+            {
+                animSpeedX -= _accelerationSpeedX * Time.deltaTime;
+                animSpeedX = math.clamp(animSpeedX, -1, 1);
+            }
+        }
 
-        if (animSpeedX > 0.5f) animSpeedX = 1f;
-        if (animSpeedX < -0.5f) animSpeedX = -1f;
-
-        if (animSpeedZ > 0.5f) animSpeedZ = 1f;
-        if (animSpeedZ < -0.5f) animSpeedZ = -1f;
-
+        if (direction.y == 0)
+        {
+            if (animSpeedZ > 0)
+            {
+                animSpeedZ -= _stoppingSpeedZ * Time.deltaTime;
+                animSpeedZ = math.clamp(animSpeedZ, 0, 1);
+            }
+            else
+            {
+                animSpeedZ += _stoppingSpeedZ * Time.deltaTime;
+                animSpeedZ = math.clamp(animSpeedZ, -1, 0);
+            }
+        }
+        else
+        {
+            if (direction.y > 0)
+            {
+                animSpeedZ += _accelerationSpeedZ * Time.deltaTime;
+                animSpeedZ = math.clamp(animSpeedZ, -1, 1);
+            }
+            else
+            {
+                animSpeedZ -= _accelerationSpeedZ * Time.deltaTime;
+                animSpeedZ = math.clamp(animSpeedZ, -1, 1);
+            }
+        }
         _context.playerMovement.Move(direction);
 
-        //animSpeedZ = animSpeedZ > 0 ? 1 : -1;
-        //animSpeedX = animSpeedX > 0 ? 1 : -1;
-
-        _context.anim.SetFloat("SpeedX",animSpeedX);
+        _context.anim.SetFloat("SpeedX", animSpeedX);
         _context.anim.SetFloat("SpeedZ", animSpeedZ);
     }
     public override void Jump()
