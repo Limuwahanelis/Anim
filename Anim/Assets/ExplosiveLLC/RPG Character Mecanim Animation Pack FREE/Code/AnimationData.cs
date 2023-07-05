@@ -10,14 +10,14 @@ namespace RPGCharacterAnims
 	public class AnimationData
 	{
 		/// <summary>
-		/// Converts left and right-hand weapon numbers into the legacy weapon number usable by the
+		/// Converts left and right-hand _weapon numbers into the legacy _weapon number usable by the
 		/// animator's "Weapon" parameter.
 		/// </summary>
-		/// <param name="leftWeapon">Left-hand weapon.</param>
-		/// <param name="rightWeapon">Right-hand weapon.</param>
+		/// <param name="leftWeapon">Left-hand _weapon.</param>
+		/// <param name="rightWeapon">Right-hand _weapon.</param>
 		public static AnimatorWeapon ConvertToAnimatorWeapon(Weapon leftWeapon, Weapon rightWeapon)
 		{
-			// 2-handed weapon.
+			// 2-handed _weapon.
 			if (rightWeapon.Is2HandedWeapon()) { return ( AnimatorWeapon )rightWeapon; }
 
 			// Unarmed or Relax.
@@ -76,7 +76,7 @@ namespace RPGCharacterAnims
 		}
 
 		/// <summary>
-		/// Returns the duration of the weapon sheath animation.
+		/// Returns the duration of the _weapon sheath animation.
 		/// </summary>
 		/// <param name="attackSide">Side of the attack: 0- None, 1- Left, 2- Right, 3- Dual.</param>
 		/// <param name="weaponNumber">Weapon being sheathed.</param>

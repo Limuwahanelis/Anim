@@ -139,10 +139,10 @@ namespace RPGCharacterAnims.Extensions
 		/// <summary>
 		/// Sets the animation state for weapons.
 		/// </summary>
-		/// <param name="weaponWeapon">Animator weapon number. Use AnimationData's AnimatorWeapon enum.</param>
+		/// <param name="weaponWeapon">Animator _weapon number. Use AnimationData's AnimatorWeapon enum.</param>
 		/// <param name="weaponSwitch">Weapon switch. -2 leaves parameter unchanged.</param>
-		/// <param name="leftWeapon">Left weapon number. Use Weapon.cs enum.</param>
-		/// <param name="rightWeapon">Right weapon number. Use Weapon.cs enum.</param>
+		/// <param name="leftWeapon">Left _weapon number. Use Weapon.cs enum.</param>
+		/// <param name="rightWeapon">Right _weapon number. Use Weapon.cs enum.</param>
 		/// <param name="weaponSide">Weapon side: 0-None, 1-Left, 2-Right, 3-Dual.</param>
 		public static void SetWeapons(this Animator animator, AnimatorWeapon animatorWeapon, int weaponSwitch, Weapon leftWeapon, Weapon rightWeapon, Side weaponSide)
 		{

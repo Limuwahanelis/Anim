@@ -237,7 +237,7 @@ namespace RPGCharacterAnims
 				var twoHandedWeapons = new Weapon[] {
 					Weapon.TwoHandSword
 				};
-				// If we're not wielding 2Handed weapon already, just switch to the first one in the list.
+				// If we're not wielding 2Handed _weapon already, just switch to the first one in the list.
 				if (System.Array.IndexOf(twoHandedWeapons, rpgCharacterController.rightWeapon) == -1)
 				{ weaponNumber = twoHandedWeapons[0]; }
 

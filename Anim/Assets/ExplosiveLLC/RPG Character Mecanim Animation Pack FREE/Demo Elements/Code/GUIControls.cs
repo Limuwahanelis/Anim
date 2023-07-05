@@ -214,7 +214,7 @@ namespace RPGCharacterAnims
 			}
 			var offset = 310;
 
-			// TwoHanded weapon.
+			// TwoHanded _weapon.
 			foreach (var weapon in WeaponGroupings.TwoHandedWeapons) {
 				if (rpgCharacterController.rightWeapon != weapon) {
 					var label = weapon.ToString();
@@ -229,11 +229,11 @@ namespace RPGCharacterAnims
 				}
 				offset += 30;
 			}
-			// Instant weapon toggle.
+			// Instant _weapon toggle.
 			useInstant = GUI.Toggle(new Rect(1000, 310, 100, 30), useInstant, "Instant");
 			if (useInstant) { switchWeaponContext.type = "Instant"; }
 
-			// Perform the weapon switch using the SwitchWeaponContext created earlier.
+			// Perform the _weapon switch using the SwitchWeaponContext created earlier.
 			if (doSwitch) { rpgCharacterController.TryStartAction(HandlerTypes.SwitchWeapon, switchWeaponContext); }
 		}
 	}

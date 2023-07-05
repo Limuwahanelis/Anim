@@ -5,7 +5,7 @@ namespace RPGCharacterAnims.Extensions
 	public static class WeaponExtensions
 	{
 		/// <summary>
-		/// Checks if the weapon is a 2 Handed weapon.
+		/// Checks if the _weapon is a 2 Handed _weapon.
 		/// </summary>
 		/// <param name="weapon">Weapon value to check.</param>
 		/// <returns>True if 2 Handed, false if not.</returns>
@@ -13,7 +13,7 @@ namespace RPGCharacterAnims.Extensions
 		{ return weapon == Weapon.TwoHandSword; }
 
 		/// <summary>
-		/// Checks if the weapon is equipped, i.e not Relaxing, or Unarmed.
+		/// Checks if the _weapon is equipped, i.e not Relaxing, or Unarmed.
 		/// </summary>
 		/// <param name="weapon">Weapon value to check.</param>
 		/// <returns>True or false.</returns>
@@ -21,7 +21,7 @@ namespace RPGCharacterAnims.Extensions
 		{ return weapon != Weapon.Unarmed; }
 
 		/// <summary>
-		/// Checks if the weapon is empty, i.e Relaxing, or Unarmed.
+		/// Checks if the _weapon is empty, i.e Relaxing, or Unarmed.
 		/// </summary>
 		/// <param name="weapon">Weapon value to check.</param>
 		/// <returns>True or false.</returns>
@@ -29,7 +29,7 @@ namespace RPGCharacterAnims.Extensions
 		{ return weapon == Weapon.Unarmed; }
 
 		/// <summary>
-		/// Returns true if the weapon number can use IKHands.
+		/// Returns true if the _weapon number can use IKHands.
 		/// </summary>
 		/// <param name="weapon">Weapon to test.</param>
 		public static bool IsIKWeapon(this Weapon weapon)
@@ -51,7 +51,7 @@ namespace RPGCharacterAnims.Extensions
 		}
 
 		/// <summary>
-		/// Checks if the animator weapon is a 2 Handed weapon.
+		/// Checks if the animator _weapon is a 2 Handed _weapon.
 		/// </summary>
 		/// <param name="weapon">Weapon value to check.</param>
 		/// <returns>True if 1 Handed, false if not.</returns>
@@ -59,7 +59,7 @@ namespace RPGCharacterAnims.Extensions
 		{ return weapon == AnimatorWeapon.TWOHANDSWORD; }
 
 		/// <summary>
-		/// Checks if the animator weapon is Unarmed or Relaxed.
+		/// Checks if the animator _weapon is Unarmed or Relaxed.
 		/// </summary>
 		/// <param name="weapon">Weapon value to check.</param>
 		/// <returns>True if 1 Handed, false if not.</returns>

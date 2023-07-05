@@ -105,14 +105,14 @@ namespace RPGCharacterAnims.Actions
 				unsheathRight = changeRight && fromRightWeapon != toRightWeapon && !toRightWeapon.HasNoWeapon();
 			}
 
-			// Sheath weapons first if our starting weapon is different from our desired weapon and we're
+			// Sheath weapons first if our starting _weapon is different from our desired _weapon and we're
 			// not starting from an Unarmed position.
 			if (context.type == "sheath" || context.type == "switch") {
 				sheathLeft = changeLeft && fromLeftWeapon != toLeftWeapon && !fromLeftWeapon.HasNoWeapon();
 				sheathRight = changeRight && fromRightWeapon != toRightWeapon && !fromRightWeapon.HasNoWeapon();
 			}
 
-			// Unsheath a weapon if our starting weapon is different from our desired weapon and we're
+			// Unsheath a _weapon if our starting _weapon is different from our desired _weapon and we're
 			// not ending on an Unarmed position.
 			if (context.type == "unsheath" || context.type == "switch") {
 				unsheathLeft = changeLeft && fromLeftWeapon != toLeftWeapon && !toLeftWeapon.HasNoWeapon();
@@ -123,7 +123,7 @@ namespace RPGCharacterAnims.Actions
 				fromRightWeapon, toRightWeapon, fromLeftWeapon, toLeftWeapon);
 
 			///
-			/// Actually make changes to the weapon controller.
+			/// Actually make changes to the _weapon controller.
 			///
 
 			// If Instant Switch.
@@ -133,7 +133,7 @@ namespace RPGCharacterAnims.Actions
 				else if (changeLeft) { weaponController.InstantWeaponSwitch(toLeftWeapon); }
 				else if (changeRight) { weaponController.InstantWeaponSwitch(toRightWeapon); }
 			}
-			// Non-instant weapon switch.
+			// Non-instant _weapon switch.
 			else {
 
 				// SHEATHING
@@ -154,7 +154,7 @@ namespace RPGCharacterAnims.Actions
 		}
 
 		/// <summary>
-		/// Updates the weapons in character controller through callback, syncs the weapon visibility, and then ends the action.
+		/// Updates the weapons in character controller through callback, syncs the _weapon visibility, and then ends the action.
 		/// </summary>
 		/// <param name="controller"></param>
 		/// <param name="weaponController">RPGCharacterWeaponController.</param>
@@ -170,7 +170,7 @@ namespace RPGCharacterAnims.Actions
 				if (changeLeft) { controller.leftWeapon = toLeftWeapon; }
 				if (changeRight) { controller.rightWeapon = toRightWeapon; }
 
-				// Turn off the isWeaponSwitching flag and sync weapon object visibility.
+				// Turn off the isWeaponSwitching flag and sync _weapon object visibility.
 				weaponController.SyncWeaponVisibility();
 				EndAction(controller);
 			});

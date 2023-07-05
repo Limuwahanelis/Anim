@@ -27,7 +27,6 @@ public class NormalPlayerState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
-        Debug.Log(direction);
         if (direction.x == 0)
         {
             if (animSpeedX > 0)

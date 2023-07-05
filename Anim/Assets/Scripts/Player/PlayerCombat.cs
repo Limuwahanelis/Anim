@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour
 {
-    [SerializeField] GameObject _weapon;
+    [SerializeField] PlayerWeapon _weapon;
+    [SerializeField] GameObject _weaponObject;
     [SerializeField] Transform _rightHandWeaponHold;
     [SerializeField] Transform _backWeaponHold;
 
@@ -19,11 +20,15 @@ public class PlayerCombat : MonoBehaviour
     {
         
     }
+    public void SetCheckForEnemies(bool value)
+    {
+        _weapon.SetCheckForCollisions(value);
+    }
 
     public void AttachWeaponToRightHand()
     {
-        _weapon.transform.position = _rightHandWeaponHold.transform.position;
-        _weapon.transform.rotation = _backWeaponHold.transform.rotation;
-        _weapon.transform.parent = _rightHandWeaponHold;
+        _weaponObject.transform.position = _rightHandWeaponHold.transform.position;
+        _weaponObject.transform.rotation = _backWeaponHold.transform.rotation;
+        _weaponObject.transform.parent = _rightHandWeaponHold;
     }
 }

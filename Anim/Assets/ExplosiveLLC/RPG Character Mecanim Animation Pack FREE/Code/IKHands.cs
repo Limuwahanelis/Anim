@@ -43,7 +43,7 @@ namespace RPGCharacterAnims
 		/// </summary>
 		public void BlendIK(bool blendOn, float delay, float timeToBlend, Weapon weapon)
 		{
-            // If using 2 handed weapon.
+            // If using 2 handed _weapon.
 			if (weapon.Is2HandedWeapon()) {
 				if (blendOn) { isUsed = true; }
 			}

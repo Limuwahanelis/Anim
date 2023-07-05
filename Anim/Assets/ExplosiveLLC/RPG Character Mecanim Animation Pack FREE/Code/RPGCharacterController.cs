@@ -185,19 +185,19 @@ namespace RPGCharacterAnims
         private Vector3 _cameraRelativeInput;
 
 		/// <summary>
-		/// Integer weapon number for the right hand. See the Weapon enum in AnimationData.cs for a
+		/// Integer _weapon number for the right hand. See the Weapon enum in AnimationData.cs for a
 		/// full list.
 		/// </summary>
 		[HideInInspector] public Weapon rightWeapon = Weapon.Unarmed;
 
 		/// <summary>
-		/// Integer weapon number for the left hand. See the Weapon enum in AnimationData.cs for a
+		/// Integer _weapon number for the left hand. See the Weapon enum in AnimationData.cs for a
 		/// full list.
 		/// </summary>
 		[HideInInspector] public Weapon leftWeapon = Weapon.Unarmed;
 
 		/// <summary>
-		/// Returns whether the character is holding a two-handed weapon. Two-handed weapons are
+		/// Returns whether the character is holding a two-handed _weapon. Two-handed weapons are
 		/// "held" in the right hand.
 		/// </summary>
 		public bool hasTwoHandedWeapon => rightWeapon.Is2HandedWeapon();
@@ -462,8 +462,8 @@ namespace RPGCharacterAnims
         /// </summary>
         /// <param name="attackNumber">Animation number to play. See AnimationData.RandomAttackNumber for details.</param>
         /// <param name="attackSide">Side of the attack: 0- None, 1- Left, 2- Right, 3- Dual.</param>
-        /// <param name="leftWeapon">Left side weapon. See Weapon enum in AnimationData.cs.</param>
-        /// <param name="rightWeapon">Right-hand weapon. See Weapon enum in AnimationData.cs.</param>
+        /// <param name="leftWeapon">Left side _weapon. See Weapon enum in AnimationData.cs.</param>
+        /// <param name="rightWeapon">Right-hand _weapon. See Weapon enum in AnimationData.cs.</param>
         /// <param name="duration">Duration in seconds that animation is locked.</param>
         public void Attack(int attackNumber, Side attackSide, Weapon leftWeapon, Weapon rightWeapon, float duration)
         {
@@ -484,7 +484,7 @@ namespace RPGCharacterAnims
         /// <param name="side">Side of the attack: 0- None, 1- Left, 2- Right, 3- Dual.</param>
         /// <param name="leftWeapon">Whether to attack on the left side.</param>
         /// <param name="rightWeapon">Whether to attack on the right side.</param>
-        /// <param name="twoHandedWeapon">If wielding a two-handed weapon.</param>
+        /// <param name="twoHandedWeapon">If wielding a two-handed _weapon.</param>
         public void RunningAttack(Side side, bool leftWeapon, bool rightWeapon, bool twoHandedWeapon)
         {
 			if (side == Side.Right && rightWeapon) { animator.SetActionTrigger(AnimatorTrigger.AttackTrigger, 4); }

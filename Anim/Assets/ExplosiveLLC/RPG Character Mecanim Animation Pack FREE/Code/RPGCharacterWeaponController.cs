@@ -40,7 +40,7 @@ namespace RPGCharacterAnims
 
         private void Start()
         {
-            // Listen for the animator's weapon switch event.
+            // Listen for the animator's _weapon switch event.
             var animatorEvents = animator.gameObject.GetComponent<RPGCharacterAnimatorEvents>();
             animatorEvents.OnWeaponSwitch.AddListener(WeaponSwitch);
 		}
@@ -53,7 +53,7 @@ namespace RPGCharacterAnims
         { coroQueue.RunCallback(callback); }
 
         /// <summary>
-        /// Queue a command to unsheath a weapon.
+        /// Queue a command to unsheath a _weapon.
         /// </summary>
         /// <param name="weapon">Weapon to unsheath.</param>
         public void UnsheathWeapon(Weapon weapon)
@@ -63,7 +63,7 @@ namespace RPGCharacterAnims
         }
 
         /// <summary>
-        /// Async method to unsheath a weapon.
+        /// Async method to unsheath a _weapon.
         /// </summary>
         /// <param name="weapon">Weapon to unsheath.</param>
         /// <returns>IEnumerator for use with StartCoroutine.</returns>
@@ -76,11 +76,11 @@ namespace RPGCharacterAnims
 			var currentAnimatorWeapon = ( AnimatorWeapon )animator.GetInteger(AnimationParameters.Weapon);
 			var currentWeaponType = (Weapon) animator.GetInteger(AnimationParameters.Weapon);
 
-            // Switching to 2Handed weapon.
+            // Switching to 2Handed _weapon.
             if (weapon.Is2HandedWeapon()) {
 				if (debugWalkthrough) { Debug.Log($"Switching to 2Handed Weapon:{weapon}"); }
 
-				// Switching from 2Handed weapon.
+				// Switching from 2Handed _weapon.
 				if (currentWeaponType.Is2HandedWeapon()) {
 					if (debugWalkthrough) { Debug.Log("Switching from 2Handed weapon."); }
 					DoWeaponSwitch(( int )AnimatorWeapon.UNARMED, weapon, weapon.ToAnimatorWeapon(), Side.Unchanged, false);
@@ -100,10 +100,10 @@ namespace RPGCharacterAnims
         }
 
 		/// <summary>
-		/// Queue a command to sheath the current weapon and switch to a new one.
+		/// Queue a command to sheath the current _weapon and switch to a new one.
 		/// </summary>
-		/// <param name="fromWeapon">Which weapon to sheath.</param>
-		/// <param name="toWeapon">Target weapon if immediately unsheathing new weapon.</param>
+		/// <param name="fromWeapon">Which _weapon to sheath.</param>
+		/// <param name="toWeapon">Target _weapon if immediately unsheathing new _weapon.</param>
 		public void SheathWeapon(Weapon fromWeapon, Weapon toWeapon)
         {
 			if (debugWalkthrough) { Debug.Log($"SheathWeapon - fromWeapon:{fromWeapon}  toWeapon:{toWeapon}"); }
@@ -111,10 +111,10 @@ namespace RPGCharacterAnims
         }
 
         /// <summary>
-        /// Async method to sheath the current weapon and switch to a new one.
+        /// Async method to sheath the current _weapon and switch to a new one.
         /// </summary>
-        /// <param name="weaponToSheath">Which weapon to sheath.</param>
-        /// <param name="weaponToUnsheath">Target weapon if immediately unsheathing a new weapon.</param>
+        /// <param name="weaponToSheath">Which _weapon to sheath.</param>
+        /// <param name="weaponToUnsheath">Target _weapon if immediately unsheathing a new _weapon.</param>
         /// <returns>IEnumerator for use with StartCoroutine.</returns>
         public IEnumerator _SheathWeapon(Weapon weaponToSheath, Weapon weaponToUnsheath)
         {
@@ -126,11 +126,11 @@ namespace RPGCharacterAnims
 			// Reset for animation events.
 			isWeaponSwitching = true;
 
-            // Putting away a weapon.
+            // Putting away a _weapon.
             if (weaponToUnsheath.HasNoWeapon()) {
 				if (debugWalkthrough) { Debug.Log("Putting away a weapon."); }
 
-				// Have at least 1 weapon.
+				// Have at least 1 _weapon.
 				if (rpgCharacterController.rightWeapon.HasEquippedWeapon()
 					|| rpgCharacterController.leftWeapon.HasEquippedWeapon()) {
 
@@ -145,14 +145,14 @@ namespace RPGCharacterAnims
         }
 
         /// <summary>
-        /// Switch to the weapon number instantly.
+        /// Switch to the _weapon number instantly.
         /// </summary>
         /// <param name="weapon">Weapon to switch to.</param>
         public void InstantWeaponSwitch(Weapon weapon)
         { coroQueue.Run(_InstantWeaponSwitch(weapon)); }
 
 		/// <summary>
-		/// Async method to instant weapon switch.
+		/// Async method to instant _weapon switch.
 		/// </summary>
 		/// <param name="weaponNumber">Weapon number to switch to.</param>
 		/// <returns>IEnumerator for use with StartCoroutine.</returns>
@@ -194,10 +194,10 @@ namespace RPGCharacterAnims
 		}
 
 		/// <summary>
-		/// Performs the weapon switch by setting Animator parameters then triggering Sheath or Unsheath animation.
+		/// Performs the _weapon switch by setting Animator parameters then triggering Sheath or Unsheath animation.
 		/// </summary>
 		/// <param name="weaponSwitch">AnimatorWeapon switching from.</param>
-		/// <param name="weapon">The weapon switching to.</param>
+		/// <param name="weapon">The _weapon switching to.</param>
 		/// <param name="animatorWeapon">Weapon enum switching to.</param>
 		/// <param name="side">Weapon side. -1=Leave existing, 1=Left, 2=Right, 3=Dual</param>
 		/// <param name="sheath">"sheath" or "unsheath".</param>
@@ -231,7 +231,7 @@ namespace RPGCharacterAnims
 				animator.SetAnimatorTrigger(AnimatorTrigger.WeaponUnsheathTrigger);
 				StartCoroutine(_WeaponVisibility(weapon, true));
 
-				// If using IKHands and IK weapon, trigger IK blend.
+				// If using IKHands and IK _weapon, trigger IK blend.
 				if (rpgCharacterController.ikHands != null && weapon.IsIKWeapon())
 				{ rpgCharacterController.ikHands.BlendIK(true, 0.75f, 1, weapon); }
 			}
@@ -240,10 +240,10 @@ namespace RPGCharacterAnims
 		/// <summary>
 		/// Sets the animation state for weapons with debug option.
 		/// </summary>
-		/// <param name="animatorWeapon">Animator weapon number. Use AnimationData's AnimatorWeapon enum.</param>
+		/// <param name="animatorWeapon">Animator _weapon number. Use AnimationData's AnimatorWeapon enum.</param>
 		/// <param name="weaponSwitch">Weapon switch. -2 leaves parameter unchanged.</param>
-		/// <param name="leftWeapon">Left weapon number. Use Weapon.cs enum.</param>
-		/// <param name="rightWeapon">Right weapon number. Use Weapon.cs enum.</param>
+		/// <param name="leftWeapon">Left _weapon number. Use Weapon.cs enum.</param>
+		/// <param name="rightWeapon">Right _weapon number. Use Weapon.cs enum.</param>
 		/// <param name="weaponSide">Weapon side: 0-None, 1-Left, 2-Right, 3-Dual.</param>
 		private void SetWeaponWithDebug(AnimatorWeapon animatorWeapon, int weaponSwitch, Weapon leftWeapon, Weapon rightWeapon, Side weaponSide)
 		{
@@ -261,7 +261,7 @@ namespace RPGCharacterAnims
         }
 
         /// <summary>
-        /// Helper method used by other weapon visibility methods to safely set a weapon object's visibility.
+        /// Helper method used by other _weapon visibility methods to safely set a _weapon object's visibility.
         /// This will work even if the object is not set in the component parameters.
         /// </summary>
         /// <param name="weaponObject">Weapon to update.</param>
@@ -272,15 +272,15 @@ namespace RPGCharacterAnims
         }
 
         /// <summary>
-        /// Hide all weapon objects and set the animator and the character controller to the unarmed state.
+        /// Hide all _weapon objects and set the animator and the character controller to the unarmed state.
         /// </summary>
         public void HideAllWeapons()
         { StartCoroutine(_HideAllWeapons(false, true)); }
 
         /// <summary>
-        /// Async method to all weapon objects and set the animator and the character controller to the unarmed state.
+        /// Async method to all _weapon objects and set the animator and the character controller to the unarmed state.
         /// </summary>
-        /// <param name="timed">Whether to wait until a period of time to hide the weapon.</param>
+        /// <param name="timed">Whether to wait until a period of time to hide the _weapon.</param>
         /// <param name="resetToUnarmed">Whether to reset the animator and the character controller to the unarmed state.</param>
         /// <returns>IEnumerator for use with StartCoroutine.</returns>
         public IEnumerator _HideAllWeapons(bool timed, bool resetToUnarmed)
@@ -301,11 +301,11 @@ namespace RPGCharacterAnims
         }
 
         /// <summary>
-        /// Set a single weapon's visibility.
+        /// Set a single _weapon's visibility.
         /// </summary>
         /// <param name="weaponNumber">Weapon object to set.</param>
         /// <param name="visible">Whether to set it visible or not.</param>
-        /// <param name="dual">Whether to update the same weapon in the other hand as well.</param>
+        /// <param name="dual">Whether to update the same _weapon in the other hand as well.</param>
         public IEnumerator _WeaponVisibility(Weapon weaponNumber, bool visible)
         {
 			if (debugWeaponVisibility) { Debug.Log($"WeaponVisibility:{weaponNumber}   Visible:{visible}"); }
@@ -317,14 +317,14 @@ namespace RPGCharacterAnims
         }
 
         /// <summary>
-        /// Sync weapon object visibility to the current weapons in the RPGCharacterController.
+        /// Sync _weapon object visibility to the current weapons in the RPGCharacterController.
         /// </summary>
         public void SyncWeaponVisibility()
         { coroQueue.Run(_SyncWeaponVisibility()); }
 
         /// <summary>
-        /// Async method to sync weapon object visiblity to the current weapons in RPGCharacterController.
-        /// This will wait for weapon switching to finish. If your aim is to force this update, call WeaponSwitch
+        /// Async method to sync _weapon object visiblity to the current weapons in RPGCharacterController.
+        /// This will wait for _weapon switching to finish. If your aim is to force this update, call WeaponSwitch
         /// first. This will stop the _HideAllWeapons and _WeaponVisibility coroutines.
         /// </summary>
         /// <returns>IEnumerator for use with.</returns>
