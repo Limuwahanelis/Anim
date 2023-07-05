@@ -14,28 +14,39 @@ public class AnimationDurationList : ScriptableObject
 #if UNITY_EDITOR
     [HideInInspector]
     public AnimatorController animatorController;
+    private SerializedObject serializedObject;
+    private SerializedProperty serializedProperty;
     public void RefreshList()
     {
-        SerializedObject serializedObject = new SerializedObject(this);
-        SerializedProperty serializedProperty = serializedObject.FindProperty("animations");
+        serializedObject = new SerializedObject(this);
+        serializedProperty = serializedObject.FindProperty("animations");
         animations.Clear();
         serializedObject.Update();
-        for (int i = 0; i < animatorController.layers[0].stateMachine.states.Length; i++)
+        GetAllStatesFromSubStateMachine(animatorController.layers[0].stateMachine);
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    private void GetAllStatesFromSubStateMachine(AnimatorStateMachine stateMachine)
+    {
+        for (int i = 0; i < stateMachine.states.Length; i++)
         {
-            AnimatorState state = animatorController.layers[0].stateMachine.states[i].state;
-            if (state.motion == null)
+            AnimatorState state = stateMachine.states[i].state;
+            if (state.motion == null || state.motion.GetType() == typeof(BlendTree))
             {
-                serializedProperty.InsertArrayElementAtIndex(i);
+                serializedProperty.InsertArrayElementAtIndex(serializedProperty.arraySize);
                 AnimationData tmp2 = new AnimationData(state.name, 0);
-                serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("name").stringValue = tmp2.name;
-                serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("duration").floatValue = tmp2.duration;
+                serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1).FindPropertyRelative("name").stringValue = tmp2.name;
+                serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1).FindPropertyRelative("duration").floatValue = tmp2.duration;
                 continue;
             }
-            serializedProperty.InsertArrayElementAtIndex(i);
-            serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("name").stringValue = state.name;
-            serializedProperty.GetArrayElementAtIndex(i).FindPropertyRelative("duration").floatValue = state.motion.averageDuration;
+                serializedProperty.InsertArrayElementAtIndex(serializedProperty.arraySize );
+                serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1 ).FindPropertyRelative("name").stringValue = state.name;
+                serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1 ).FindPropertyRelative("duration").floatValue = state.motion.averageDuration;
         }
-        serializedObject.ApplyModifiedProperties();
+        foreach(ChildAnimatorStateMachine subStateMachine in stateMachine.stateMachines)
+        {
+            GetAllStatesFromSubStateMachine(subStateMachine.stateMachine);
+        }
     }
 #endif
 }
