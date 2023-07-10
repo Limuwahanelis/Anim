@@ -13,13 +13,19 @@ public class RootMotionController : MonoBehaviour
     }
     private void OnAnimatorMove()
     {
-       
+
 
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        playerGO.transform.position += anim.deltaPosition;
+        
         for (int i = 0; i < animationTag.Length; i++)
         {
-            if (stateInfo.IsTag(animationTag[i])) anim.ApplyBuiltinRootMotion();
+            if (stateInfo.IsTag(animationTag[i]))
+            {
+                playerGO.transform.position += anim.deltaPosition;
+                playerGO.transform.rotation *= anim.deltaRotation;
+                anim.ApplyBuiltinRootMotion();
+
+            }
             else anim.applyRootMotion = false;
         }
     }

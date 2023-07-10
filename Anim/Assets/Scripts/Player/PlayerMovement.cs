@@ -1,15 +1,21 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] float _rotationSpeed = 5f;
+    [SerializeField] float _combatMovementSpeed;
+    [SerializeField] float _combatBackMovementSpeed;
     [SerializeField] float _speed;
     [SerializeField] float _backMoveSpeed;
     [SerializeField] Rigidbody _rb;
     [SerializeField] Camera _cam;
     [SerializeField] float _jumpForce;
+    [SerializeField] Transform _playerBody;
+    private float _rotationAngle;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +34,18 @@ public class PlayerMovement : MonoBehaviour
         _rb.AddForce(Vector3.up*_jumpForce);
 
     }
+    public void RotatePlayerBack()
+    {
+        _playerBody.Rotate(Vector3.up, -_rotationAngle);
+        _rotationAngle = 0;
+    }
+    public void Roll(Vector2 direction)
+    {
+        _rotationAngle =(MathF.Atan2(direction.y, -direction.x) * 180 / Mathf.PI)-90;
+       // if (math.abs(_rotationAngle) == 90) _rotationAngle *= -1;
+        //Debug.Log("x: "+direction.x+" y: "+direction.y +" "+_rotationAngle);
+        _playerBody.Rotate(Vector3.up, _rotationAngle);
+    }
     public void LandOnGround()
     {
         _rb.useGravity = false;
@@ -40,9 +58,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void LateUpdate()
     {
-        float angle = Mathf.DeltaAngle(transform.rotation.eulerAngles.y, _cam.transform.rotation.eulerAngles.y);
-        //Quaternion.Lerp(transform._rotation, _cam.transform._rotation, Time.deltaTime * _speed);
-       // _rb.MoveRotation(Quaternion.Lerp(transform._rotation, _cam.transform._rotation, Time.deltaTime * _speed));
-         transform.Rotate(Vector3.up, angle * Time.deltaTime * _rotationSpeed);
+      //  float angle = Mathf.DeltaAngle(transform.rotation.eulerAngles.y, _cam.transform.rotation.eulerAngles.y);
+       //  transform.Rotate(Vector3.up, angle * Time.deltaTime * _rotationSpeed);
     }
 }

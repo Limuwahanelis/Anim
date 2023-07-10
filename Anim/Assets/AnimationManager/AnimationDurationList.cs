@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Unity.Mathematics;
 #if UNITY_EDITOR
 using UnityEditor.Animations;
 #endif

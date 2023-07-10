@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class NormalPlayerState : PlayerState
 {
-    float _stoppingSpeedX = 1f;
-    float _stoppingSpeedZ = 1f;
-    float _accelerationSpeedX = 2f;
-    float _accelerationSpeedZ = 2f;
+    float _stoppingSpeedX = 2f;
+    float _stoppingSpeedZ = 2f;
+    float _accelerationSpeedX = 2.5f;
+    float _accelerationSpeedZ = 2.5f;
     float animSpeedZ = 0;
     float animSpeedX = 0;
     public NormalPlayerState(PlayerContext context) : base(context)
@@ -27,6 +27,7 @@ public class NormalPlayerState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
+        Debug.Log((math.atan2(direction.y , -direction.x) * 180 / Mathf.PI)-90);
         if (direction.x == 0)
         {
             if (animSpeedX > 0)
@@ -80,7 +81,8 @@ public class NormalPlayerState : PlayerState
                 animSpeedZ = math.clamp(animSpeedZ, -1, 1);
             }
         }
-        _context.playerMovement.Move(direction);
+        if(math.abs(animSpeedX)>0.1|| math.abs(animSpeedZ)>0.1) _context.playerMovement.Move(direction);
+
 
         _context.anim.SetFloat("SpeedX", animSpeedX);
         _context.anim.SetFloat("SpeedZ", animSpeedZ);

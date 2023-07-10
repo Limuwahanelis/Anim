@@ -38,6 +38,10 @@ public class PlayerInputHandler : MonoBehaviour
         _isFocused = inputValue.Get<float>()>0?true:false;
         teleportSkill.enabled = _isFocused;
     }
+    void OnDodge(InputValue inputValue)
+    {
+        _player.CurrentPlayerState.Dodge();
+    }
     void OnFire(InputValue inputValue)
     {
         if(_isFocused) teleportSkill.Perform();

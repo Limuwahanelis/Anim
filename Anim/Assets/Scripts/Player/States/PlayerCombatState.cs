@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PlayerCombatState : PlayerState
 {
-    Vector2 _previousDirection;
+    Vector2 _direction;
     float _stoppingSpeedX = 1f;
     float _stoppingSpeedZ = 1f;
     float _accelerationSpeedX = 2f;
@@ -23,7 +23,8 @@ public class PlayerCombatState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
-        if(direction.x==0)
+        _direction=direction;
+        if (direction.x==0)
         {
             if (animSpeedX > 0)
             {
@@ -80,9 +81,6 @@ public class PlayerCombatState : PlayerState
 
         _context.anim.SetFloat("SpeedX", animSpeedX);
         _context.anim.SetFloat("SpeedZ", animSpeedZ);
-
-
-        _previousDirection = direction;
     }
 
     public override void SetUpState()
@@ -94,7 +92,10 @@ public class PlayerCombatState : PlayerState
     {
         _context.anim.SetTrigger("Attack");
     }
-
+    public override void Dodge()
+    {
+        _context.ChangePlayerState(new PlayerDodgingState(_context, this,_direction));
+    }
     public override void InterruptState()
     {
         
