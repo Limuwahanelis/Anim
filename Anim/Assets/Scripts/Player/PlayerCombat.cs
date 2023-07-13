@@ -8,6 +8,9 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] GameObject _weaponObject;
     [SerializeField] Transform _rightHandWeaponHold;
     [SerializeField] Transform _backWeaponHold;
+    [SerializeField] ComboList _comboList1;
+    [SerializeField] Player _player;
+    private int _comboAttackCounter=1;
 
     // Start is called before the first frame update
     void Start()
@@ -31,4 +34,33 @@ public class PlayerCombat : MonoBehaviour
         _weaponObject.transform.rotation = _backWeaponHold.transform.rotation;
         _weaponObject.transform.parent = _rightHandWeaponHold;
     }
+    public void ResetComboCounter()
+    {
+        _comboAttackCounter = 1;
+    }
+    public void PerformNextAttackInCombo(in PlayerAttackingState attackState)
+    {
+        if (_comboAttackCounter > _comboList1.comboList.Count)
+        {
+           // attackState.StartWaitingForAttackEnd("Attack "+_comboAttackCounter);
+            return;
+        }
+        if(_player.animManager.GetAnimationCurrentDuration("Attack "+_comboAttackCounter) >= _comboList1.comboList[_comboAttackCounter-1].nextAttackWindowStart && _player.animManager.GetAnimationCurrentDuration("Attack " + _comboAttackCounter) <= _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd)
+        {
+            attackState.ResetTimer();
+            _player.anim.SetTrigger("Attack");
+            _comboAttackCounter++;
+            attackState.StartWaitingForAttackEnd("Attack " + _comboAttackCounter);
+        }
+    }
+
+    //IEnumerator WaitForAttackEndCor(float attackLength)
+    //{
+    //    float timer = 0;
+    //    while(timer<attackLength)
+    //    {
+    //        yield return null;
+    //    }
+    //    _player.ChangeState(new)
+    //}
 }

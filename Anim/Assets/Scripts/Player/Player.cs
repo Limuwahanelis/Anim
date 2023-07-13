@@ -6,9 +6,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public PlayerState CurrentPlayerState => _currentPlayerState;
+    public Animator anim => _anim;
+    public AnimationManager animManager => _animManager;
     [SerializeField] Animator _anim;
     [SerializeField] AnimationManager _animManager;
     [SerializeField] PlayerMovement _playerMovement;
+    [SerializeField] PlayerCombat _playerCombat;
     [SerializeField] PlayerChecks _playerChecks;
     [SerializeField] CorutineHolder _corutineHolder;
     private PlayerState _currentPlayerState;
@@ -24,7 +27,8 @@ public class Player : MonoBehaviour
             ChangePlayerState = ChangeState,
             animationManager = _animManager,
             playerChecks = _playerChecks,
-            corutineHolder = _corutineHolder
+            corutineHolder = _corutineHolder,
+            playerCombat = _playerCombat,
         };
         _currentPlayerState = new NormalPlayerState(_context);
     }

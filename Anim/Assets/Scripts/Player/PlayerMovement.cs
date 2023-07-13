@@ -51,14 +51,14 @@ public class PlayerMovement : MonoBehaviour
         _rb.useGravity = false;
         _rb.velocity = Vector3.zero;
     }
-    public void Move(Vector2 direction)
+    public void Move(Vector2 direction, bool isInCombat)
     {
-        if (direction.y >= 0) transform.Translate(Vector3.forward * direction.y*Time.deltaTime*_speed + Vector3.right * direction.x * Time.deltaTime * _speed);// _rb.velocity = new Vector3( direction.x * _speed, _rb.velocity.y, direction.y * _speed);
-        else  transform.Translate(Vector3.forward * direction.y * Time.deltaTime*_backMoveSpeed + Vector3.right * direction.x * Time.deltaTime * _backMoveSpeed);// new Vector3(direction.x * _backMoveSpeed, _rb.velocity.y, direction.y * _backMoveSpeed);
+        if (direction.y >= 0) transform.Translate(Vector3.forward * direction.y*Time.deltaTime*(isInCombat?_combatMovementSpeed:_speed) + Vector3.right * direction.x * Time.deltaTime * (isInCombat ? _combatMovementSpeed : _speed));// _rb.velocity = new Vector3( direction.x * _speed, _rb.velocity.y, direction.y * _speed);
+        else  transform.Translate(Vector3.forward * direction.y * Time.deltaTime*(isInCombat?_combatBackMovementSpeed: (isInCombat ? _combatBackMovementSpeed : _backMoveSpeed)) + Vector3.right * direction.x * Time.deltaTime * _backMoveSpeed);// new Vector3(direction.x * _backMoveSpeed, _rb.velocity.y, direction.y * _backMoveSpeed);
     }
     private void LateUpdate()
     {
-      //  float angle = Mathf.DeltaAngle(transform.rotation.eulerAngles.y, _cam.transform.rotation.eulerAngles.y);
-       //  transform.Rotate(Vector3.up, angle * Time.deltaTime * _rotationSpeed);
+        float angle = Mathf.DeltaAngle(transform.rotation.eulerAngles.y, _cam.transform.rotation.eulerAngles.y);
+        transform.Rotate(Vector3.up, angle * Time.deltaTime * _rotationSpeed);
     }
 }

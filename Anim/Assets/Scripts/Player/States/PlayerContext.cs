@@ -11,5 +11,5 @@ public class PlayerContext
     public Action<PlayerState> ChangePlayerState;
     public PlayerChecks playerChecks;
     public CorutineHolder corutineHolder;
-
+    public PlayerCombat playerCombat;
 }

@@ -1549,6 +1549,8 @@ MonoBehaviour:
   _weaponObject: {fileID: 1899968473}
   _rightHandWeaponHold: {fileID: 325019101}
   _backWeaponHold: {fileID: 260206496}
+  _comboList1: {fileID: 11400000, guid: bcaba5178d554484bb29f31d08936285, type: 2}
+  _player: {fileID: 1215438557}
 --- !u!114 &1215438555
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1579,8 +1581,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rotationSpeed: 5
-  _combatMovementSpeed: 0
-  _combatBackMovementSpeed: 0
+  _combatMovementSpeed: 2
+  _combatBackMovementSpeed: 0.8
   _speed: 1
   _backMoveSpeed: 0.8
   _rb: {fileID: 1215438559}
@@ -1602,6 +1604,7 @@ MonoBehaviour:
   _anim: {fileID: 4870552773361171092}
   _animManager: {fileID: 7495358341537164020}
   _playerMovement: {fileID: 1215438556}
+  _playerCombat: {fileID: 1215438553}
   _playerChecks: {fileID: 1215438555}
   _corutineHolder: {fileID: 947781343}
 --- !u!114 &1215438558

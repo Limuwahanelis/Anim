@@ -81,7 +81,7 @@ public class NormalPlayerState : PlayerState
                 animSpeedZ = math.clamp(animSpeedZ, -1, 1);
             }
         }
-        if(math.abs(animSpeedX)>0.1|| math.abs(animSpeedZ)>0.1) _context.playerMovement.Move(direction);
+        if(math.abs(animSpeedX)>0.1|| math.abs(animSpeedZ)>0.1) _context.playerMovement.Move(direction,false);
 
 
         _context.anim.SetFloat("SpeedX", animSpeedX);

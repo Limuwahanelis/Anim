@@ -77,7 +77,7 @@ public class PlayerCombatState : PlayerState
                 animSpeedZ = math.clamp(animSpeedZ, -1, 1);
             }
         }
-        _context.playerMovement.Move(direction);
+        _context.playerMovement.Move(direction,true);
 
         _context.anim.SetFloat("SpeedX", animSpeedX);
         _context.anim.SetFloat("SpeedZ", animSpeedZ);
@@ -86,11 +86,13 @@ public class PlayerCombatState : PlayerState
     public override void SetUpState()
     {
         _context.anim.SetTrigger("Unseath");
+        _context.playerCombat.ResetComboCounter();
 
     }
     public override void Attack()
     {
-        _context.anim.SetTrigger("Attack");
+        _context.ChangePlayerState(new PlayerAttackingState(_context,this));
+        
     }
     public override void Dodge()
     {
