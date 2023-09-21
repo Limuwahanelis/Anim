@@ -18,4 +18,6 @@ public abstract class PlayerState
     public virtual void Attack() { }
 
     public virtual void Dodge() { }
+
+    public virtual void ChangeMove() { }
 }

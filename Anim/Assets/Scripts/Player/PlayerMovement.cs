@@ -6,10 +6,18 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    public enum MoveState 
+    {
+        WALK,RUN,FAST_RUN
+    }
+
+
     [SerializeField] float _rotationSpeed = 5f;
     [SerializeField] float _combatMovementSpeed;
     [SerializeField] float _combatBackMovementSpeed;
-    [SerializeField] float _speed;
+    [SerializeField] float _runSpeed;
+    [SerializeField] float _walkSpeed;
+    [SerializeField] float _fastRunSpeed;
     [SerializeField] float _backMoveSpeed;
     [SerializeField] Rigidbody _rb;
     [SerializeField] Camera _cam;
@@ -51,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
         _rb.useGravity = false;
         _rb.velocity = Vector3.zero;
     }
-    public void Move(Vector2 direction, bool isInCombat)
+    public void Move(Vector2 direction, MoveState moveState)
     {
         if(direction!=Vector2.zero)
         {
@@ -62,11 +70,20 @@ public class PlayerMovement : MonoBehaviour
             targetRot *= camRot;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * _rotationSpeed);
         }
-        Debug.Log(direction);
+        float speed = 0;
+        switch(moveState)
+        {
+            case MoveState.WALK: speed = _walkSpeed;break;
+            case MoveState.RUN: speed = _runSpeed;break;
+            case MoveState.FAST_RUN: speed = _fastRunSpeed;break;
+        }
+
         float value = 0;
+
+
+
         if (direction.x != 0 || direction.y != 0) value = 1;
-        Debug.Log(value);
-        transform.Translate(Vector3.forward * value * Time.deltaTime * (isInCombat ? _combatMovementSpeed : _speed));
+        transform.Translate(Vector3.forward * value * Time.deltaTime * speed);
     }
     private void LateUpdate()
     {

@@ -5,12 +5,12 @@ using UnityEngine;
 
 public class NormalPlayerState : PlayerState
 {
-    float _stoppingSpeedZ = 0.5f;
-    float _accelerationSpeedZ = 2.5f;
+    float _stoppingSpeedZ = 3f;
+    float _accelerationSpeedZ = 3f;
     float animSpeedZ = 0;
     public NormalPlayerState(PlayerContext context) : base(context)
     {
-
+        animSpeedZ = _context.anim.GetFloat("SpeedZ");
     }
 
     public override void Update()
@@ -29,7 +29,7 @@ public class NormalPlayerState : PlayerState
             if (animSpeedZ > 0)
             {
                 animSpeedZ -= _stoppingSpeedZ * Time.deltaTime;
-                animSpeedZ = math.clamp(animSpeedZ, 0, 1);
+                animSpeedZ = math.clamp(animSpeedZ, 0, 2);
             }
         }
         else
@@ -37,17 +37,17 @@ public class NormalPlayerState : PlayerState
             if (math.abs(direction.x) > 0)
             {
                 animSpeedZ += _accelerationSpeedZ * Time.deltaTime;
-                animSpeedZ = math.clamp(animSpeedZ, 0, 1);
+                animSpeedZ = math.clamp(animSpeedZ, 0, 2);
             }
 
             if (math.abs(direction.y) > 0)
             {
                 animSpeedZ += _accelerationSpeedZ * Time.deltaTime;
-                animSpeedZ = math.clamp(animSpeedZ, 0, 1);
+                animSpeedZ = math.clamp(animSpeedZ, 0, 2);
             }
         }
         
-         _context.playerMovement.Move(direction, false);
+         _context.playerMovement.Move(direction, PlayerMovement.MoveState.RUN);
 
         _context.anim.SetFloat("SpeedZ", animSpeedZ);
     }
@@ -63,5 +63,10 @@ public class NormalPlayerState : PlayerState
     public override void Attack()
     {
         _context.ChangePlayerState(new PlayerCombatState(_context));
+    }
+    public override void ChangeMove()
+    {
+        _context.ChangePlayerState(new PlayerWalkingState(_context));
+
     }
 }
