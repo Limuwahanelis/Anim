@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Header("Debug"), SerializeField] bool _printState;
+
+
     public PlayerState CurrentPlayerState => _currentPlayerState;
     public Animator anim => _anim;
     public AnimationManager animManager => _animManager;
@@ -41,7 +44,7 @@ public class Player : MonoBehaviour
 
     public void ChangeState(PlayerState newState)
     {
-        Debug.Log(newState.GetType());
+        if(_printState) Debug.Log(newState.GetType());
         _currentPlayerState.InterruptState();
         newState.SetUpState();
         _currentPlayerState = newState;
