@@ -26,6 +26,8 @@ public class PlayerInputHandler : MonoBehaviour
     void OnMove(InputValue inputValue)
     {
         move = inputValue.Get<Vector2>();
+        //Debug.Log(move);
+        //Debug.Log((MathF.Atan2(move.y, move.x) * 180 / Math.PI)-90);
     }
     void OnJump()
     {
