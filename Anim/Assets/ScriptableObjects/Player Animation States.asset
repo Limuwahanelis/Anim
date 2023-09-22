@@ -23,6 +23,14 @@ MonoBehaviour:
     duration: 1.0666667
   - name: Sprinting Forward Roll30
     duration: 1.1666667
+  - name: Movement 0
+    duration: 0
+  - name: Crouched To Sprinting
+    duration: 0.5
+  - name: Fast Run
+    duration: 0.53333336
+  - name: Run To Stop
+    duration: 0.90000004
   - name: Unseath
     duration: 1
   - name: Attack 1
