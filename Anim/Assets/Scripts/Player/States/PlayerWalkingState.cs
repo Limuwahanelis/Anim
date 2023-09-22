@@ -20,7 +20,7 @@ public class PlayerWalkingState : PlayerState
 
     public override void SetUpState()
     {
-
+        _context.staminaBar.StartRegeneratingStamina();
     }
     public override void Move(Vector2 direction)
     {

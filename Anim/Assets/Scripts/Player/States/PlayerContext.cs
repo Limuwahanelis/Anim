@@ -12,4 +12,5 @@ public class PlayerContext
     public PlayerChecks playerChecks;
     public CorutineHolder corutineHolder;
     public PlayerCombat playerCombat;
+    public StaminaBar staminaBar;
 }

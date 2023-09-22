@@ -17,7 +17,7 @@ public abstract class PlayerState
     public virtual void Jump() { }
     public virtual void Attack() { }
 
-    public virtual void Dodge() { }
+    public virtual void Dash() { }
 
     public virtual void ChangeMove() { }
 }

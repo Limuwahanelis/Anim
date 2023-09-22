@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class NormalPlayerState : PlayerState
+public class PlayerFastRunState : PlayerState
 {
+    float staminaCost = 20f;
     float _stoppingSpeedZ = 3f;
     float _accelerationSpeedZ = 3f;
     float animSpeedZ = 0;
-    public NormalPlayerState(PlayerContext context) : base(context)
+    Vector2 _previousDirection = Vector2.zero;
+    public PlayerFastRunState(PlayerContext context) : base(context)
     {
-        animSpeedZ = _context.anim.GetFloat("SpeedZ");
+
     }
 
     public override void Update()
@@ -20,10 +22,19 @@ public class NormalPlayerState : PlayerState
 
     public override void SetUpState()
     {
-        _context.staminaBar.StartRegeneratingStamina();
+        _context.anim.SetTrigger("Fast_Run");
+        _context.staminaBar.StopRegenerating();
     }
     public override void Move(Vector2 direction)
     {
+        Debug.Log(math.dot(direction, _previousDirection));
+        if(direction==Vector2.zero)
+        {
+            _context.anim.SetTrigger("Stop_Run");
+            _context.anim.SetFloat("SpeedZ", 0);
+            _context.ChangePlayerState(new NormalPlayerState(_context));
+        }
+
         if (direction.x == 0 && direction.y == 0)
         {
             if (animSpeedZ > 0)
@@ -46,10 +57,18 @@ public class NormalPlayerState : PlayerState
                 animSpeedZ = math.clamp(animSpeedZ, 0, 2);
             }
         }
-        
-         _context.playerMovement.Move(direction, PlayerMovement.MoveState.RUN);
+
+        _context.playerMovement.Move(direction, PlayerMovement.MoveState.FAST_RUN);
+        _context.staminaBar.IncreaseCurrentStamina(-staminaCost * Time.deltaTime);
 
         _context.anim.SetFloat("SpeedZ", animSpeedZ);
+        _previousDirection = direction;
+        if(_context.staminaBar.CurrentStamina<=0)
+        {
+            _context.anim.SetTrigger("Normal_Run");
+            //_context.anim.SetFloat("SpeedZ", 0);
+            _context.ChangePlayerState(new NormalPlayerState(_context));
+        }
     }
     public override void Jump()
     {
@@ -68,10 +87,5 @@ public class NormalPlayerState : PlayerState
     {
         _context.ChangePlayerState(new PlayerWalkingState(_context));
 
-    }
-    public override void Dash()
-    {
-
-        _context.ChangePlayerState(new PlayerFastRunState(_context));
     }
 }
