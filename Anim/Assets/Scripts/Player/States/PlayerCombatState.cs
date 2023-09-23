@@ -33,7 +33,6 @@ public class PlayerCombatState : PlayerState
     {
         animSpeedX = _context.anim.GetFloat("SpeedX");
         animSpeedZ = _context.anim.GetFloat("SpeedZ");
-        _context.anim.SetTrigger("Unseath");
         _context.playerCombat.ResetComboCounter();
 
     }

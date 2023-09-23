@@ -13,4 +13,5 @@ public class PlayerContext
     public CorutineHolder corutineHolder;
     public PlayerCombat playerCombat;
     public StaminaBar staminaBar;
+    public MaterializeObject materializeObject;
 }

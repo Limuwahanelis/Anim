@@ -31,8 +31,14 @@ public class PlayerCombat : MonoBehaviour
     public void AttachWeaponToRightHand()
     {
         _weaponObject.transform.position = _rightHandWeaponHold.transform.position;
-        _weaponObject.transform.rotation = _backWeaponHold.transform.rotation;
         _weaponObject.transform.parent = _rightHandWeaponHold;
+        _weaponObject.transform.localRotation = Quaternion.identity; //_backWeaponHold.transform.rotation;
+    }
+    public void MoveWeaponToSeath()
+    {
+        _weaponObject.transform.position = _backWeaponHold.transform.position;
+        _weaponObject.transform.parent = _backWeaponHold;
+        _weaponObject.transform.localRotation = Quaternion.identity; //_backWeaponHold.transform.rotation;
     }
     public void ResetComboCounter()
     {

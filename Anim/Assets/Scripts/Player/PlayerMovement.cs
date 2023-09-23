@@ -11,7 +11,6 @@ public class PlayerMovement : MonoBehaviour
         WALK,RUN,FAST_RUN
     }
 
-
     [SerializeField] float _rotationSpeed = 5f;
     [SerializeField] float _combatMovementSpeed;
     [SerializeField] float _combatBackMovementSpeed;
@@ -20,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _fastRunSpeed;
     [SerializeField] float _backMoveSpeed;
     [SerializeField] Rigidbody _rb;
+    [SerializeField] Ringhandle _jumphandle;
     [SerializeField] Camera _cam;
     [SerializeField] float _jumpForce;
     [SerializeField] Transform _playerBody;
@@ -39,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("ADD for");
         _rb.useGravity = true;
-        _rb.AddForce(Vector3.up*_jumpForce);
+        _rb.AddForce(_jumphandle.GetVector() * _jumpForce);
 
     }
     public void RotatePlayerBack()

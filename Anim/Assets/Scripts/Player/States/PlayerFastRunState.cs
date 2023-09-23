@@ -27,7 +27,6 @@ public class PlayerFastRunState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
-        Debug.Log(math.dot(direction, _previousDirection));
         if(direction==Vector2.zero)
         {
             _context.anim.SetTrigger("Stop_Run");

@@ -51,6 +51,7 @@ public class StaminaBar : MonoBehaviour
     {
         if (_regenCor != null) StopCoroutine(_regenCor);
         _regenCor = null;
+        _isRegenerating = false;
     }
     IEnumerator StaminaRegenerateCor()
     {
@@ -66,5 +67,6 @@ public class StaminaBar : MonoBehaviour
             yield return null;
         }
         _isRegenerating=false;
+        _regenCor = null;
     }
 }
