@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerFallingState : PlayerState
 {
+    float _landingTime = 0f;
     bool _touchedGround = false;
     public PlayerFallingState(PlayerContext context) : base(context)
     {
@@ -12,13 +13,17 @@ public class PlayerFallingState : PlayerState
 
     public override void Update()
     {
+        if(_touchedGround)
+        {
+            _landingTime+=Time.deltaTime;
+        }
         if(_context.playerChecks.IsTouchingGround && !_touchedGround)
         {
             _context.anim.SetBool("IsFalling", false);
             _context.anim.SetBool("IsOnGround", true);
-            _touchedGround = true;
+             _touchedGround = true;
         }
-        if(_context.animationManager.GetAnimationCurrentDuration("Landing")>0.4f)
+        if(_landingTime>=0.1f)
         {
             _context.ChangePlayerState(new NormalPlayerState(_context));
         }

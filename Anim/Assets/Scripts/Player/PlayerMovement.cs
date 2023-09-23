@@ -35,11 +35,12 @@ public class PlayerMovement : MonoBehaviour
     {
         
     }
-    public void Jump()
+    public void Jump(bool isMoving)
     {
         Debug.Log("ADD for");
-        _rb.useGravity = true;
-        _rb.AddForce(_jumphandle.GetVector() * _jumpForce);
+        _rb.velocity = Vector3.zero;
+        if (isMoving) _rb.AddForce(_jumphandle.GetVector() * _jumpForce);
+        else _rb.AddForce(Vector3.up * _jumpForce/2); ;
 
     }
     public void RotatePlayerBack()
@@ -68,7 +69,9 @@ public class PlayerMovement : MonoBehaviour
             camRot.eulerAngles = new Vector3(0, _cam.transform.rotation.eulerAngles.y, 0);
             targetRot.eulerAngles = new Vector3(0, MathF.Atan2(direction.y, -direction.x) * (180 / Mathf.PI) - 90, 0);
             targetRot *= camRot;
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * _rotationSpeed);
+            //transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * _rotationSpeed);
+            //_rb.MoveRotation(Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * _rotationSpeed));
+            _rb.rotation = Quaternion.RotateTowards(_rb.rotation, targetRot, Time.deltaTime * _rotationSpeed);
         }
         float speed = 0;
         switch(moveState)
@@ -83,7 +86,8 @@ public class PlayerMovement : MonoBehaviour
 
 
         if (direction.x != 0 || direction.y != 0) value = 1;
-        transform.Translate(Vector3.forward * value * Time.deltaTime * speed);
+        _rb.velocity = transform.forward * speed*value;// new Vector3( direction.x*speed, 0, direction.y*speed);
+       // transform.Translate(Vector3.forward * value * Time.deltaTime * speed);
     }
     private void LateUpdate()
     {

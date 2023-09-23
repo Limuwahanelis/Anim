@@ -8,6 +8,7 @@ public class PlayerWalkingState : PlayerState
     float _stoppingSpeedZ = 0.5f;
     float _accelerationSpeedZ = 2.5f;
     float animSpeedZ = 0;
+    bool _isMoving;
     public PlayerWalkingState(PlayerContext context) : base(context)
     {
         animSpeedZ = _context.anim.GetFloat("SpeedZ");
@@ -26,6 +27,7 @@ public class PlayerWalkingState : PlayerState
     {
         if (direction.x == 0 && direction.y == 0)
         {
+            _isMoving = false;
             if (animSpeedZ > 1)
             {
                 animSpeedZ -= _accelerationSpeedZ * Time.deltaTime;
@@ -39,6 +41,7 @@ public class PlayerWalkingState : PlayerState
         }
         else
         {
+            _isMoving = true;
             if (animSpeedZ > 1)
             {
                 animSpeedZ -= _accelerationSpeedZ * Time.deltaTime;
@@ -66,7 +69,7 @@ public class PlayerWalkingState : PlayerState
     }
     public override void Jump()
     {
-        _context.ChangePlayerState?.Invoke(new PlayerJumpingState(_context));
+        _context.ChangePlayerState?.Invoke(new PlayerJumpingState(_context, _isMoving));
     }
 
     public override void InterruptState()

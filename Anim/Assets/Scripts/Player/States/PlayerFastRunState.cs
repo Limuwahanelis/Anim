@@ -10,6 +10,7 @@ public class PlayerFastRunState : PlayerState
     float _accelerationSpeedZ = 3f;
     float animSpeedZ = 0;
     Vector2 _previousDirection = Vector2.zero;
+    bool _isMoving;
     public PlayerFastRunState(PlayerContext context) : base(context)
     {
 
@@ -36,6 +37,7 @@ public class PlayerFastRunState : PlayerState
 
         if (direction.x == 0 && direction.y == 0)
         {
+            _isMoving = false;
             if (animSpeedZ > 0)
             {
                 animSpeedZ -= _stoppingSpeedZ * Time.deltaTime;
@@ -44,6 +46,7 @@ public class PlayerFastRunState : PlayerState
         }
         else
         {
+            _isMoving = true;
             if (math.abs(direction.x) > 0)
             {
                 animSpeedZ += _accelerationSpeedZ * Time.deltaTime;
@@ -65,13 +68,12 @@ public class PlayerFastRunState : PlayerState
         if(_context.staminaBar.CurrentStamina<=0)
         {
             _context.anim.SetTrigger("Normal_Run");
-            //_context.anim.SetFloat("SpeedZ", 0);
             _context.ChangePlayerState(new NormalPlayerState(_context));
         }
     }
     public override void Jump()
     {
-        _context.ChangePlayerState?.Invoke(new PlayerJumpingState(_context));
+        _context.ChangePlayerState?.Invoke(new PlayerJumpingState(_context,_isMoving));
     }
 
     public override void InterruptState()
