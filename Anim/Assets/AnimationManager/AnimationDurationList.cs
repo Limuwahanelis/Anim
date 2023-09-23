@@ -35,14 +35,16 @@ public class AnimationDurationList : ScriptableObject
             if (state.motion == null || state.motion.GetType() == typeof(BlendTree))
             {
                 serializedProperty.InsertArrayElementAtIndex(serializedProperty.arraySize);
-                AnimationData tmp2 = new AnimationData(state.name, 0);
+                AnimationData tmp2 = new AnimationData(state.name, 0,0);
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1).FindPropertyRelative("name").stringValue = tmp2.name;
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1).FindPropertyRelative("duration").floatValue = tmp2.duration;
+                serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize - 1).FindPropertyRelative("speed").floatValue = tmp2.speed;
                 continue;
             }
                 serializedProperty.InsertArrayElementAtIndex(serializedProperty.arraySize );
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1 ).FindPropertyRelative("name").stringValue = state.name;
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1 ).FindPropertyRelative("duration").floatValue = state.motion.averageDuration;
+                serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize - 1).FindPropertyRelative("speed").floatValue = state.speed;
         }
         foreach(ChildAnimatorStateMachine subStateMachine in stateMachine.stateMachines)
         {
