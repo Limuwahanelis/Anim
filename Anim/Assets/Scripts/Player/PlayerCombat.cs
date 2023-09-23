@@ -50,7 +50,7 @@ public class PlayerCombat : MonoBehaviour
         {
             return;
         }
-        if(_player.animManager.GetAnimationCurrentDuration("Attack "+_comboAttackCounter) >= _comboList1.comboList[_comboAttackCounter-1].nextAttackWindowStart && _player.animManager.GetAnimationCurrentDuration("Attack " + _comboAttackCounter) <= _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd)
+        if(_player.animManager.GetAnimationCurrentDuration("Attack "+_comboAttackCounter) >= _comboList1.comboList[_comboAttackCounter-1].nextAttackWindowStart / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter) && _player.animManager.GetAnimationCurrentDuration("Attack " + _comboAttackCounter)  <= _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter))
         {
             attackState.ResetTimer();
             _player.anim.SetTrigger("Attack");

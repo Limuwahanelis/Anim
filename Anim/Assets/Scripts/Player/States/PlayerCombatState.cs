@@ -38,7 +38,7 @@ public class PlayerCombatState : PlayerState
     }
     public override void Attack()
     {
-        _context.ChangePlayerState(new PlayerAttackingState(_context,this));
+        _context.ChangePlayerState(new PlayerAttackingState(_context));
         
     }
     public override void Dash()

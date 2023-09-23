@@ -73,7 +73,7 @@ public class PlayerFastRunState : PlayerState
     }
     public override void Jump()
     {
-        _context.ChangePlayerState?.Invoke(new PlayerJumpingState(_context,_isMoving));
+        _context.ChangePlayerState(new PlayerJumpingState(_context,_isMoving));
     }
 
     public override void InterruptState()
@@ -82,7 +82,7 @@ public class PlayerFastRunState : PlayerState
     }
     public override void Attack()
     {
-        _context.ChangePlayerState(new PlayerCombatState(_context));
+        _context.ChangePlayerState(new PlayerAttackingState(_context));
     }
     public override void ChangeMove()
     {

@@ -11,19 +11,13 @@ public class PlayerAttackingState : PlayerState
     float _timer;
     bool _isWaitingForAttackEnd;
     string _endAttackName;
-    private PlayerState _previousState;
-    float _stoppingSpeedX = 1f;
-    float _stoppingSpeedZ = 1f;
-    float _accelerationSpeedX = 2f;
-    float _accelerationSpeedZ = 2f;
-    float animSpeedZ = 0;
-    float animSpeedX = 0;
-    public PlayerAttackingState(PlayerContext context, PlayerState previousState) : base(context)
+    public PlayerAttackingState(PlayerContext context) : base(context)
     {
-        _previousState = previousState;
     }
     public override void SetUpState()
     {
+        _context.materializeObject.InstantlyMaterialize();
+        _context.playerMovement.Move(Vector2.zero, PlayerMovement.MoveState.WALK);
         _context.anim.SetTrigger("Attack");
         _attackLength = _context.animationManager.GetAnimationLength("Attack 1");
         _attackSpeed = _context.animationManager.GetAnimationSpeed("Attack 1");
@@ -35,7 +29,7 @@ public class PlayerAttackingState : PlayerState
         {
             if (_timer >= _attackLength/_attackSpeed)
             {
-                _context.ChangePlayerState(_previousState);
+                _context.ChangePlayerState(new NormalPlayerState(_context));
             }
             _timer += Time.deltaTime;
         }
@@ -51,6 +45,7 @@ public class PlayerAttackingState : PlayerState
     {
         _context.playerCombat.MoveWeaponToSeath();
         _context.materializeObject.Materialize();
+        _context.playerCombat.ResetComboCounter();
     }
     //private void SetAnimation(Vector2 direction)
     //    {

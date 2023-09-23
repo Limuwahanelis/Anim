@@ -5,9 +5,9 @@ using UnityEngine;
 public class MaterializeObject : MonoBehaviour
 {
     [SerializeField] float speed = 1f;
-    float _value = 0f;
     private float _emissionWidth;
     private Renderer _renderer;
+    Coroutine _matCor;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,17 +28,28 @@ public class MaterializeObject : MonoBehaviour
     }
     public void Materialize()
     {
-        StartCoroutine(MaterializeCor());
+        _matCor= StartCoroutine(MaterializeCor());
+    }
+    public void InstantlyMaterialize()
+    {
+        if(_matCor!=null)
+        {
+            StopCoroutine(_matCor);
+            _matCor = null;
+        }
+        _renderer.material.SetFloat("_level", 1 + _emissionWidth);
+        _renderer.material.SetFloat("_level2", -(1 + _emissionWidth));
     }
     IEnumerator MaterializeCor()
     {
-        while (_value < 1+_emissionWidth)
+        float value = 0;
+        while (value < 1+_emissionWidth)
         {
-            _value += Time.deltaTime * speed;
-            _renderer.material.SetFloat("_level", _value);
-            _renderer.material.SetFloat("_level2", -_value);
+            value += Time.deltaTime * speed;
+            _renderer.material.SetFloat("_level", value);
+            _renderer.material.SetFloat("_level2", -value);
             yield return null;
         }
-        _value = 0f;
+        _matCor = null;
     }
 }
