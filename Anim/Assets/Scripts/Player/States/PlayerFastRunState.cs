@@ -84,9 +84,4 @@ public class PlayerFastRunState : PlayerState
     {
         _context.ChangePlayerState(new PlayerAttackingState(_context));
     }
-    public override void ChangeMove()
-    {
-        _context.ChangePlayerState(new PlayerWalkingState(_context));
-
-    }
 }
