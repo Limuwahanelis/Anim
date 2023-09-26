@@ -14,4 +14,5 @@ public class PlayerContext
     public PlayerCombat playerCombat;
     public StaminaBar staminaBar;
     public MaterializeObject materializeObject;
+    public PlayerClimbing playerClimbing;
 }

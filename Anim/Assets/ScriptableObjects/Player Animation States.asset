@@ -25,9 +25,6 @@ MonoBehaviour:
   - name: Landing
     duration: 1.0666667
     speed: 1
-  - name: Sprinting Forward Roll30
-    duration: 1.1666667
-    speed: 1
   - name: Movement 0
     duration: 0
     speed: 0
@@ -40,6 +37,9 @@ MonoBehaviour:
   - name: Run To Stop
     duration: 0.90000004
     speed: 1
+  - name: Climbing
+    duration: 0
+    speed: 1
   - name: Attack 1
     duration: 1.2
     speed: 0.75
@@ -49,10 +49,4 @@ MonoBehaviour:
   - name: Attack 3
     duration: 1.2
     speed: 0.75
-  - name: Combat Move
-    duration: 0
-    speed: 0
-  - name: Dodge
-    duration: 1.2
-    speed: 1
   animatorController: {fileID: 9100000, guid: 7f32f6cfbf66de845b55e5ed4284ba3f, type: 2}

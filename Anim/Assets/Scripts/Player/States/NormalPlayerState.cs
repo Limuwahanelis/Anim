@@ -12,6 +12,7 @@ public class NormalPlayerState : PlayerState
     public NormalPlayerState(PlayerContext context) : base(context)
     {
         animSpeedZ = _context.anim.GetFloat("SpeedZ");
+        _context.playerClimbing.OnStartClimbing += ChangeToClimbingState;
     }
 
     public override void Update()
@@ -61,20 +62,13 @@ public class NormalPlayerState : PlayerState
 
     public override void InterruptState()
     {
-
+        _context.playerClimbing.OnStartClimbing -= ChangeToClimbingState;
     }
     public override void Attack()
     {
         _context.ChangePlayerState(new PlayerAttackingState(_context));
     }
-    public override void ChangeMove()
-    {
-        _context.ChangePlayerState(new PlayerWalkingState(_context));
-
-    }
-    public override void Dash()
-    {
-
-        _context.ChangePlayerState(new PlayerFastRunState(_context));
-    }
+    public override void ChangeMove()=>_context.ChangePlayerState(new PlayerWalkingState(_context));
+    public override void Dash()=> _context.ChangePlayerState(new PlayerFastRunState(_context));
+    private void ChangeToClimbingState()=>_context.ChangePlayerState(new PlayerClimbingState(_context));
 }
