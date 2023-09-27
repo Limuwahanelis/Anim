@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class PlayerMovement : MonoBehaviour
         WALK,RUN,FAST_RUN
     }
 
+    public Action OnEndedClimb;
+    [SerializeField] float _climbSpeed=2f;
+    public float ClimbSpeed => _climbSpeed;
     [SerializeField] float _rotationSpeed = 5f;
     [SerializeField] float _combatMovementSpeed;
     [SerializeField] float _combatBackMovementSpeed;
@@ -59,6 +63,11 @@ public class PlayerMovement : MonoBehaviour
     {
         _rb.useGravity = false;
         _rb.velocity = Vector3.zero;
+    }
+    public void Climb(Vector2 direction)
+    {
+        Vector3 aa = _rb.position + (transform.right * direction.x* _climbSpeed * Time.deltaTime + transform.up * direction.y * _climbSpeed * Time.deltaTime);
+        _rb.MovePosition(aa);
     }
     public void Move(Vector2 direction, MoveState moveState)
     {
