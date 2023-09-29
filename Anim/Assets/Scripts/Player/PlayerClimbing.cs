@@ -22,35 +22,69 @@ public class PlayerClimbing : MonoBehaviour
     [SerializeField] LayerMask _climbingMask;
     [SerializeField] Transform _startClimbingTran;
     [SerializeField] Rig _playerRig;
-    [SerializeField] Transform _baseRightHand;
-    [SerializeField] Transform _baseLeftHand;
-    [SerializeField] Transform _baseRightLeg;
-    [SerializeField] Transform _baseLeftLeg;
-
-    [SerializeField] Transform _base2RightHand;
-    [SerializeField] Transform _base2LeftHand;
-    [SerializeField] Transform _base2RightLeg;
-    [SerializeField] Transform _base2LeftLeg;
 
     [SerializeField] Transform _targetRightHand;
     [SerializeField] Transform _targetLeftHand;
     [SerializeField] Transform _targetRightLeg;
     [SerializeField] Transform _targetLeftLeg;
 
-    private Transform[] targets;
+    [SerializeField] Transform _RHTransform;
+    [SerializeField] Transform _LHTransform;
+    [SerializeField] Transform _RLTransform;
+    [SerializeField] Transform _LLTransform;
+
+    [SerializeField] TwoBoneIKConstraint _RHIK;
+    [SerializeField] TwoBoneIKConstraint _LHIK;
+    [SerializeField] TwoBoneIKConstraint _RLIK;
+    [SerializeField] TwoBoneIKConstraint _LLIK;
+
+    private Transform[] _limbsTransform;
+    private TwoBoneIKConstraint[] _IKs;
+    private Transform[] _targets;
+    private Vector3[] _allHitNormals;
+    private Quaternion[] _targetsOffset;
+
+    private float angleAboutX;
+    private float angleAboutZ;
+
+    private bool[] _allGroundSphereCastHits;
     private bool _isClimbing = false;
     private RaycastHit hit;
+    private float addedHeight = 0.6f;
 
     bool _isCycling = false;
     bool _isFirstCycle = true;
+
+
     // Start is called before the first frame update
     void Start()
     {
-        targets = new Transform[4];
-        targets[0] = _targetRightHand;
-        targets[1] = _targetLeftHand;
-        targets[2] = _targetRightLeg;
-        targets[3] = _targetLeftLeg;
+        _targets = new Transform[4];
+        _targets[0] = _targetRightHand;
+        _targets[1] = _targetLeftHand;
+        _targets[2] = _targetRightLeg;
+        _targets[3] = _targetLeftLeg;
+
+        _limbsTransform = new Transform[4];
+        _limbsTransform[0] = _RHTransform;
+        _limbsTransform[1] = _LHTransform;
+        _limbsTransform[2] = _RLTransform;
+        _limbsTransform[3] = _LLTransform;
+
+        _IKs = new TwoBoneIKConstraint[4];
+        _IKs[0] = _RHIK;
+        _IKs[1] = _LHIK;
+        _IKs[2] = _RLIK;
+        _IKs[3] = _LLIK;
+
+        _targetsOffset = new Quaternion[4];
+        _targetsOffset[0] = _targets[0].rotation;
+        _targetsOffset[1] = _targets[1].rotation;
+        _targetsOffset[2] = _targets[2].rotation;
+        _targetsOffset[3] = _targets[3].rotation;
+
+        _allGroundSphereCastHits = new bool[5];
+        _allHitNormals = new Vector3[4];
     }
 
     // Update is called once per frame
@@ -86,16 +120,63 @@ public class PlayerClimbing : MonoBehaviour
     {
         Gizmos.DrawLine(_bodyCheck.position,_bodyCheck.position+_bodyCheck.forward* _checkLength);
     }
-
+    public void SetUpLimbs()
+    {
+        RotateCharacterLimb();
+        //Vector3 hitpoint;
+        //float currentHitDistance;
+        //CastRayForLimb(_RHTransform,addedHeight, out hitpoint,out currentHitDistance,out _,out _);
+        //_targetRightHand.position = hitpoint;
+        //CastRayForLimb(_LHTransform, addedHeight, out hitpoint, out currentHitDistance, out _, out _);
+        //_targetLeftHand.position = hitpoint;
+        //CastRayForLimb(_RLTransform, addedHeight, out hitpoint, out currentHitDistance, out _, out _);
+        //_targetRightLeg.position = hitpoint;
+        //CastRayForLimb(_LLTransform, addedHeight, out hitpoint, out currentHitDistance, out _, out _);
+        //_targetLeftLeg.position = hitpoint;
+    }
     public void MoveToStartClimbingPos()
     {
-        _playerRig.weight = 1;
+        
         StartCoroutine(StartClimbingCor());
     }
-    public void RotatePlaeyrToBeParalelToWall()
+    public Vector3 ProjectOnContactPlane(Vector3 vector,Vector3 hitNormal)
     {
-       
+        return vector - hitNormal * Vector3.Dot(vector, hitNormal); //Vector3.ProjectOnPlane(vector, hitNormal);
     }
+    void ProjectedAxisAngles(out float angleAboutX, out float angleAboutZ, Transform limbTargetTransform, Vector3 hitNormal)
+    {
+        Vector3 xAxisProjected = ProjectOnContactPlane(limbTargetTransform.forward,hitNormal).normalized;
+        Vector3 zAxisProjected = ProjectOnContactPlane(limbTargetTransform.right, hitNormal).normalized;
+
+        angleAboutX = Vector3.SignedAngle(limbTargetTransform.forward, xAxisProjected, limbTargetTransform.right);
+        angleAboutZ = Vector3.SignedAngle(limbTargetTransform.right, zAxisProjected, limbTargetTransform.forward);
+    }
+
+    private void RotateCharacterLimb()
+    {
+        for(int i=0;i<4;i++)
+        {
+            CastRayForLimb(_limbsTransform[i], addedHeight, out Vector3 hitPoint, out _, out Vector3 hitNormal, out _allGroundSphereCastHits[i]);
+            _allHitNormals[i] = hitNormal;
+
+            if (_allGroundSphereCastHits[i] == true)
+            {
+                ProjectedAxisAngles(out angleAboutX, out angleAboutZ, _limbsTransform[i], _allHitNormals[i]);
+
+                _targets[i].position = hitPoint; // maybe add offset (target is in ankle)
+                _targets[i].rotation = _limbsTransform[i].rotation;
+                //_targets[i].rotation *= _targetsOffset[i];
+                _targets[i].localEulerAngles = new Vector3(_targets[i].localEulerAngles.x + angleAboutX, _targets[i].localEulerAngles.y, _targets[i].localEulerAngles.z + angleAboutZ);
+            }
+            else
+            {
+                _targets[i].position = _limbsTransform[i].position;
+                _targets[i].rotation = _limbsTransform[i].rotation;
+                //_targets[i].rotation *= _targetsOffset[i];
+            }
+        }
+    }
+
     IEnumerator StartClimbingCor()
     {
         _isClimbing = true;
@@ -108,46 +189,35 @@ public class PlayerClimbing : MonoBehaviour
             value += Time.deltaTime * _startClimbingSpeed;
             yield return null;
         }
-        //StartCoroutine(ClimbCor());
-        Quaternion rot = Quaternion.identity;
-        Ray limbRay = new Ray(_base2RightHand.position, _base2RightHand.forward);
-        RaycastHit hit;
-        if (Physics.Raycast(limbRay, out hit, 20f, _climbingMask))
-        {
-            _targetRightHand.position = hit.point;
-            rot = Quaternion.FromToRotation(_targetRightHand.up, hit.normal);
-            _targetRightHand.rotation = rot;
-        }
-        //CastRayForLeftHand();
-
-        Vector3 hitpoint;
-        CastRayForLimb(_base2LeftHand,out hitpoint);
-        _targetLeftHand.position = hitpoint;
-        CastRayForLimb(_base2RightHand,out hitpoint);
-        _targetRightHand.position = hitpoint;
-        CastRayForLimb(_base2LeftLeg, out hitpoint);
-        _targetLeftLeg.position = hitpoint;
-        CastRayForLimb(_base2RightLeg, out hitpoint);
-        _targetRightLeg.position = hitpoint;
         OnStartClimbing?.Invoke();
+        _playerRig.weight = 1;
     }
-    private void CastRayForLimb(Transform origin, out Vector3 hitpoint)
+    private void CastRayForLimb(Transform origin,float addedHeight ,out Vector3 hitpoint,out float currentHitDistance,out Vector3 hitNormal,out bool gotCastHit)
     {
         hitpoint = Vector3.zero;
-        Quaternion rot = Quaternion.identity;
-        Ray limbRay = new Ray(origin.position, _base2LeftHand.forward);
+        Vector3 startRay = origin.position - (_player.rotation*new Vector3(0, 0, addedHeight));
+        Ray limbRay = new Ray(startRay, _player.forward);
         RaycastHit hit;
         if (Physics.Raycast(limbRay, out hit, 20f, _climbingMask))
         {
+            hitNormal = hit.normal;
             hitpoint = hit.point;
+            currentHitDistance = hit.distance + addedHeight;
+            gotCastHit = true;
+        }
+        else
+        {
+            hitNormal = Vector3.zero;
+            gotCastHit = false;
+            hitpoint = origin.position;
+            currentHitDistance = 0;
         }
     }
     public void Cycle(float speed)
     {
         if (_isCycling) return;
-        StartCoroutine(ClimbCycleCor(speed, _isFirstCycle));
     }
-    public IEnumerator ClimbCycleCor(float speed ,bool firstCycle)
+    public IEnumerator ClimbCycleCor(float speed)
     {
         if(_isCycling) yield break;
         _isCycling = true;
@@ -157,28 +227,14 @@ public class PlayerClimbing : MonoBehaviour
 
         for(int i=0;i<4;i++)
         {
-            snapPositions[i] = targets[i].position;
-        }
-        if (firstCycle)
-        {
-            CastRayForLimb(_baseRightHand, out hitPositions[0]);
-            CastRayForLimb(_baseLeftHand, out hitPositions[1]);
-            CastRayForLimb(_baseRightLeg, out hitPositions[2]);
-            CastRayForLimb(_baseLeftLeg, out hitPositions[3]);
-        }
-        else
-        {
-            CastRayForLimb(_base2RightHand, out hitPositions[0]);
-            CastRayForLimb(_base2LeftHand, out hitPositions[1]);
-            CastRayForLimb(_base2RightLeg, out hitPositions[2]);
-            CastRayForLimb(_base2LeftLeg, out hitPositions[3]);
+            snapPositions[i] = _targets[i].position;
         }
         float value = 0f;
         while(value<1f)
         {
             for(int i=0;i<4;i++)
             {
-                 targets[i].position= Vector3.Lerp(snapPositions[i], hitPositions[i], value);
+                 _targets[i].position= Vector3.Lerp(snapPositions[i], hitPositions[i], value);
             }
             value += Time.deltaTime * speed;
             yield return null;
@@ -186,9 +242,5 @@ public class PlayerClimbing : MonoBehaviour
         _isCycling = false;
         _isFirstCycle = !_isFirstCycle;
         Debug.Log("End cycle;");
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(_base2LeftHand.position, _base2LeftHand.position + _base2LeftHand.forward * 3f);
     }
 }

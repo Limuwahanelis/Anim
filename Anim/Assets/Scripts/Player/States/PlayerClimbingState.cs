@@ -6,7 +6,6 @@ public class PlayerClimbingState : PlayerState
 {
     bool _isMoving;
     float _distance = 2f;
-    bool laa;
     public PlayerClimbingState(PlayerContext context) : base(context)
     {
 
@@ -14,14 +13,16 @@ public class PlayerClimbingState : PlayerState
 
     public override void Update()
     {
-        if(laa) _context.playerClimbing.RotateTowardsWall();
-    }
+        
 
+    }
+    public override void FixedUpdate()
+    {
+        _context.playerClimbing.SetUpLimbs();
+    }
     public override void SetUpState()
     {
-        _context.playerClimbing.OnStartClimbing += () => { laa = true; };
-        _context.playerClimbing.MoveToStartClimbingPos();
-        _context.anim.SetTrigger("Climb");
+        
     }
 
     public override void InterruptState()

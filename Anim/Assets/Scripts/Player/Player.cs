@@ -47,7 +47,10 @@ public class Player : MonoBehaviour
     {
         _currentPlayerState.Update();
     }
-
+    private void FixedUpdate()
+    {
+        _currentPlayerState.FixedUpdate();
+    }
     public void ChangeState(PlayerState newState)
     {
         if(_printState) Debug.Log(newState.GetType());

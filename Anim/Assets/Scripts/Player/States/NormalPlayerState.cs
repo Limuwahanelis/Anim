@@ -70,5 +70,5 @@ public class NormalPlayerState : PlayerState
     }
     public override void ChangeMove()=>_context.ChangePlayerState(new PlayerWalkingState(_context));
     public override void Dash()=> _context.ChangePlayerState(new PlayerFastRunState(_context));
-    private void ChangeToClimbingState()=>_context.ChangePlayerState(new PlayerClimbingState(_context));
+    private void ChangeToClimbingState()=>_context.ChangePlayerState(new PlayerJumpingOnWallToClimb(_context));
 }
