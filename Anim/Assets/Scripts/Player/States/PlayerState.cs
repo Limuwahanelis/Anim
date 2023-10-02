@@ -21,5 +21,7 @@ public abstract class PlayerState
     public virtual void Dash() { }
 
     public virtual void ChangeMove() { }
+
+    public virtual void Drop() { }
 }
 

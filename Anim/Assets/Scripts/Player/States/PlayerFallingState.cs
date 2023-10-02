@@ -27,6 +27,7 @@ public class PlayerFallingState : PlayerState
         {
             _context.ChangePlayerState(new NormalPlayerState(_context));
         }
+        
     }
 
     public override void SetUpState()
@@ -37,5 +38,15 @@ public class PlayerFallingState : PlayerState
     public override void InterruptState()
     {
         
+    }
+    public override void Move(Vector2 direction)
+    {
+        if (_context.playerClimbing.CheckForClimbFromAir(direction))
+        {
+            _context.anim.SetBool("IsFalling", false);
+            _context.anim.SetBool("Start_Climb", true);
+            _context.playerClimbing.StartClimbingFromAir();
+            _context.ChangePlayerState(new PlayerClimbingState(_context));
+        }
     }
 }

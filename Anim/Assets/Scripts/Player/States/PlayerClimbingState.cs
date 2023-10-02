@@ -39,6 +39,12 @@ public class PlayerClimbingState : PlayerState
 
     }
 
+    public override void Drop()
+    {
+        _context.playerClimbing.StopClimbing();
+        _context.ChangePlayerState(new PlayerStopClimbingState(_context));
+    }
+
     private IEnumerator ClimbCor(Vector2 direction)
     {
         if (_isMoving) yield break;

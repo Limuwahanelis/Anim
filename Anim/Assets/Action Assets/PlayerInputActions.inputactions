@@ -78,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "terrt",
+                    "name": "Drop",
                     "type": "Button",
                     "id": "69d28ad9-bf36-4a37-a92f-a8b7eed2d838",
                     "expectedControlType": "Button",
@@ -366,11 +366,11 @@
                 {
                     "name": "",
                     "id": "67427692-5c68-4900-b893-857f1a2f3d0f",
-                    "path": "",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
-                    "action": "terrt",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Drop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

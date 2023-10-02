@@ -18,6 +18,7 @@ public class PlayerJumpingOnWallToClimb : PlayerState
     {
         _context.playerClimbing.MoveToStartClimbingPos();
         _context.anim.SetTrigger("Start_Climb");
+        _context.anim.SetBool("IsOnGround", false);
     }
     private void MoveToClimbingState()
     {

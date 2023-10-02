@@ -74,6 +74,8 @@ public class PlayerClimbing : MonoBehaviour
     bool _isFirstCycle = true;
 
 
+    Coroutine _climbingCor;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -188,16 +190,54 @@ public class PlayerClimbing : MonoBehaviour
         _player.eulerAngles = new Vector3(_player.eulerAngles.x + bodyEulerX, _player.eulerAngles.y, _player.eulerAngles.z);
 
     }
-
+    public void StopClimbing()
+    {
+        StopCoroutine(_climbingCor);
+        _playerRigidbody.useGravity = true;
+        _playerRig.weight = 0;
+    }
     public void SetUpLimbs()
     {
         RotateCharacterLimb();
         //RotateTowardsWall();
     }
+
+    public bool CheckForClimbFromAir(Vector2 movingDirection)
+    {
+        Quaternion targetRot = Quaternion.identity;
+        Quaternion camRot = Quaternion.identity;
+        camRot.eulerAngles = new Vector3(0, _playerCamera.transform.rotation.eulerAngles.y, 0);
+        targetRot.eulerAngles = new Vector3(0, MathF.Atan2(movingDirection.y, -movingDirection.x) * (180 / Mathf.PI) - 90, 0);
+        targetRot *= camRot;
+
+        Ray ray = new Ray(_bodyCheck.position, _bodyCheck.forward);
+        if (Physics.Raycast(ray, out hit, _checkLength, _climbingMask))
+        {
+            if (movingDirection == Vector2.zero) return false;
+            else
+            {
+                if (Quaternion.Dot(targetRot, _player.rotation) >= _wallCheckAcceptance) return true;
+                else return false;
+            }
+
+        }
+        return false;
+
+
+    }
+    public void StartClimbingFromAir()
+    {
+        _playerRigidbody.useGravity = false;
+        _playerRigidbody.velocity = Vector3.zero;
+        _playerRig.weight = 1;
+        OnStartClimbing?.Invoke();
+
+    }
     public void MoveToStartClimbingPos()
     {
+
+        _climbingCor = StartCoroutine(StartClimbingCor());
         
-        StartCoroutine(StartClimbingCor());
     }
     public Vector3 ProjectOnContactPlane(Vector3 vector,Vector3 hitNormal)
     {
@@ -219,7 +259,7 @@ public class PlayerClimbing : MonoBehaviour
         {
             CastRayForLimb(_limbsTransform[i], addedHeight, out Vector3 hitPoint, out _, out Vector3 hitNormal, out _allGroundSphereCastHits[i]);
             _allHitNormals[i] = hitNormal;
-            if (i == 0) Debug.Log(hitNormal);
+            //if (i == 0) Debug.Log(hitNormal);
             if (_allGroundSphereCastHits[i] == true)
             {
                 ProjectedAxisAngles(out angleAboutX, out angleAboutZ, _limbsTransform[i], _allHitNormals[i]);
