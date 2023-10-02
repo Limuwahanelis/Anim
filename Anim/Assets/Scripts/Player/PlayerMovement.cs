@@ -78,8 +78,6 @@ public class PlayerMovement : MonoBehaviour
             camRot.eulerAngles = new Vector3(0, _cam.transform.rotation.eulerAngles.y, 0);
             targetRot.eulerAngles = new Vector3(0, MathF.Atan2(direction.y, -direction.x) * (180 / Mathf.PI) - 90, 0);
             targetRot *= camRot;
-            //transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * _rotationSpeed);
-            //_rb.MoveRotation(Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * _rotationSpeed));
             _rb.rotation = Quaternion.RotateTowards(_rb.rotation, targetRot, Time.deltaTime * _rotationSpeed);
         }
         float speed = 0;
