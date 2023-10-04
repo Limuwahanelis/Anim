@@ -70,7 +70,6 @@ public class PlayerClimbing : MonoBehaviour
     private Vector3 _lineStart;
     private Vector3 _lineEnd;
 
-    bool _isCycling = false;
     bool _isFirstCycle = true;
 
 
@@ -314,10 +313,6 @@ public class PlayerClimbing : MonoBehaviour
             hitpoint = origin.position;
             currentHitDistance = 0;
         }
-    }
-    public void Cycle(float speed)
-    {
-        if (_isCycling) return;
     }
     private void OnDrawGizmosSelected()
     {

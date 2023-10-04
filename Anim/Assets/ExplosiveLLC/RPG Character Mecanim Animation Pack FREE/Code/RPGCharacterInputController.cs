@@ -216,7 +216,7 @@ namespace RPGCharacterAnims
         }
 
 		/// <summary>
-		/// Cycle weapons using directional pad input. Up and Down cycle forward and backward through
+		/// Cycle weapons using directional pad input. Up and Down _cycleX forward and backward through
 		/// the list of two handed weapons. Left cycles through the left hand weapons. Right cycles through
 		/// the right hand weapons.
 		/// </summary>

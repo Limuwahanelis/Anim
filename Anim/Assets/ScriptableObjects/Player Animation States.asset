@@ -37,20 +37,38 @@ MonoBehaviour:
   - name: Run To Stop
     duration: 0.90000004
     speed: 1
-  - name: Climbing
-    duration: 0
-    speed: 1
   - name: Climbing 1
     duration: 1.5666667
-    speed: 1
-  - name: wwww
-    duration: 0.75
     speed: 1
   - name: Blend Tree
     duration: 0
     speed: 0
   - name: Jump 0
     duration: 1.6666667
+    speed: 1
+  - name: Climbing 2
+    duration: 0
+    speed: 0
+  - name: Climbing pose 1
+    duration: 0
+    speed: 1
+  - name: Climbing pose 2
+    duration: 0
+    speed: 1
+  - name: Horizontal pose
+    duration: 0
+    speed: 1
+  - name: Horizontal pose 2
+    duration: 0
+    speed: 1
+  - name: horizontal climb L Pose 2
+    duration: 0
+    speed: 1
+  - name: horizontal climb R Pose 2
+    duration: 0
+    speed: 1
+  - name: horizontal climb R Pose 2 0
+    duration: 0
     speed: 1
   - name: Attack 1
     duration: 1.2
