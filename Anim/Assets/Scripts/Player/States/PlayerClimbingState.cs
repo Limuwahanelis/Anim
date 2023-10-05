@@ -15,10 +15,16 @@ public class PlayerClimbingState : PlayerState
     float _stoppingSpeedX = 8f;
     float _accelerationSpeedX = 3f;
     float _horizontalClimb = 0f;
-    float _horizontalClimbAcceleration = 3f;
+    float _horizontalClimbAcceleration = 1.5f;
+    float _verticalClimb = 0f;
+    float _verticalClimbAcceleration = 1.5f;
+    float _diagonalClimbL = 0f;
+    float _diagonalClimbR = 0f;
     int _cycleX = 1;
+    int _cycleY = 1;
     int _lastCycle = 1;
     Vector2 _lastDirection = Vector2.zero;
+    Vector2 _normalClimb = Vector2.zero;
     public PlayerClimbingState(PlayerContext context) : base(context)
     {
 
@@ -44,6 +50,7 @@ public class PlayerClimbingState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
+        Debug.Log(direction);
         _lastCycle = _cycleX;
         if (direction.x != 0)
         {
@@ -67,7 +74,6 @@ public class PlayerClimbingState : PlayerState
                     _cycleX = (int)math.ceil(_horizontalClimb);
                 }
             }
-            
         }
         if (direction.y != 0)
         {
@@ -81,12 +87,24 @@ public class PlayerClimbingState : PlayerState
                 animSpeedZ += _accelerationSpeedZ * Time.deltaTime;
                 animSpeedZ = math.clamp(animSpeedZ, -1, 1);
             }
+            if (math.abs(animSpeedZ) >= 1)
+            {
+                if (_lastDirection.y * direction.y > 0)
+                {
+                    _verticalClimb += _verticalClimbAcceleration * Time.deltaTime;
+                    if (_verticalClimb > 3) _verticalClimb = 1;
+                    _verticalClimb = math.clamp(_verticalClimb, 1, 3);
+                    _cycleY = (int)math.ceil(_verticalClimb);
+                }
+            }
         }
+
         if (direction != Vector2.zero) _lastDirection = direction;
         else ChangeAnimationAccordingToLastDirection();
         _context.anim.SetFloat("SpeedZ", animSpeedZ);
         _context.anim.SetFloat("SpeedX", animSpeedX);
         _context.anim.SetFloat("Horizontal_Climb", _horizontalClimb);
+        _context.anim.SetFloat("Vertical_Climb", _verticalClimb);
     }
 
     public override void Drop()
@@ -103,27 +121,29 @@ public class PlayerClimbingState : PlayerState
 
                 animSpeedX -= _accelerationSpeedX * Time.deltaTime;
                 animSpeedX = math.clamp(animSpeedX, -1, 1);
-                _horizontalClimb +=_accelerationSpeedX * Time.deltaTime;
-                _horizontalClimb = math.clamp(_horizontalClimb, 1, _cycleX);
+
             }
             else
             {
                 animSpeedX += _accelerationSpeedX * Time.deltaTime;
                 animSpeedX = math.clamp(animSpeedX, -1, 1);
-                _horizontalClimb += _accelerationSpeedX * Time.deltaTime;
-                _horizontalClimb = math.clamp(_horizontalClimb, 1, _cycleX);
             }
+
 
             if (animSpeedZ > 0)
             {
                 animSpeedZ -= _stoppingSpeedZ * Time.deltaTime;
                 animSpeedZ = math.clamp(animSpeedZ, 0, 1);
+
             }
             else
             {
                 animSpeedZ += _stoppingSpeedZ * Time.deltaTime;
                 animSpeedZ = math.clamp(animSpeedZ, -1, 0);
             }
+
+            _horizontalClimb += _horizontalClimbAcceleration * Time.deltaTime;
+            _horizontalClimb = math.clamp(_horizontalClimb, 1, _cycleX);
 
         }
         else if (math.abs(_lastDirection.y) > 0)
@@ -149,6 +169,9 @@ public class PlayerClimbingState : PlayerState
                 animSpeedX += _stoppingSpeedX * Time.deltaTime;
                 animSpeedX = math.clamp(animSpeedX, -1, 0);
             }
+
+            _verticalClimb += _verticalClimbAcceleration * Time.deltaTime;
+            _verticalClimb = math.clamp(_verticalClimb, 1, _cycleY);
         }
 
     }
