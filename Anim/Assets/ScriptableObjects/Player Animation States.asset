@@ -58,16 +58,10 @@ MonoBehaviour:
   - name: Horizontal pose
     duration: 0
     speed: 1
-  - name: Horizontal pose 2
+  - name: Climb UR Pose 2
     duration: 0
     speed: 1
-  - name: horizontal climb L Pose 2
-    duration: 0
-    speed: 1
-  - name: horizontal climb R Pose 2
-    duration: 0
-    speed: 1
-  - name: horizontal climb R Pose 2 0
+  - name: Climb UL Pose 2
     duration: 0
     speed: 1
   - name: Attack 1
