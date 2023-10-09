@@ -186,7 +186,8 @@ public class PlayerClimbing : MonoBehaviour
         float bodyEulerX = Mathf.MoveTowardsAngle(0, angleAboutX, maxRotationStep);
         float bodyEulerZ = Mathf.MoveTowardsAngle(0, angleAboutZ, maxRotationStep);
         Debug.Log(angleAboutX + " " + bodyEulerX);
-        _player.eulerAngles = new Vector3(_player.eulerAngles.x + bodyEulerX, _player.eulerAngles.y, _player.eulerAngles.z);
+        _player.forward = -aveHitNormal;
+        //_player.eulerAngles = new Vector3(_player.eulerAngles.x + bodyEulerX, _player.eulerAngles.y, _player.eulerAngles.z);
 
     }
     public void StopClimbing()

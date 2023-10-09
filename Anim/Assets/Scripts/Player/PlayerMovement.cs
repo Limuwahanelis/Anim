@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Ringhandle _jumphandle;
     [SerializeField] Camera _cam;
     [SerializeField] float _jumpForce;
+    [SerializeField] Transform _playerController;
     [SerializeField] Transform _playerBody;
     private float _rotationAngle;
     // Start is called before the first frame update
@@ -49,7 +50,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void RotatePlayerBack()
     {
-        _playerBody.Rotate(Vector3.up, -_rotationAngle);
+        _playerController.Rotate(Vector3.up, -_rotationAngle);
         _rotationAngle = 0;
     }
     public void Roll(Vector2 direction)
@@ -57,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
         _rotationAngle =(MathF.Atan2(direction.y, -direction.x) * 180 / Mathf.PI)-90;
        // if (math.abs(_rotationAngle) == 90) _rotationAngle *= -1;
         //Debug.Log("x: "+direction.x+" y: "+direction.y +" "+_rotationAngle);
-        _playerBody.Rotate(Vector3.up, _rotationAngle);
+        _playerController.Rotate(Vector3.up, _rotationAngle);
     }
     public void LandOnGround()
     {
@@ -66,7 +67,7 @@ public class PlayerMovement : MonoBehaviour
     }
     public void Climb(Vector2 direction)
     {
-        Vector3 aa = _rb.position + (transform.right * direction.x* _climbSpeed * Time.deltaTime + transform.up * direction.y * _climbSpeed * Time.deltaTime);
+        Vector3 aa = _rb.position + (_playerBody.right * direction.x* _climbSpeed * Time.deltaTime + _playerBody.up * direction.y * _climbSpeed * Time.deltaTime);
         _rb.MovePosition(aa);
     }
     public void Move(Vector2 direction, MoveState moveState)
