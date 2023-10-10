@@ -54,6 +54,7 @@ public class PlayerClimbingState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
+        //_context.playerClimbing.Climb(direction);
         _isBothPressed = true;
         _lastCycle = _cycleX;
         if (direction.x != 0)
@@ -84,7 +85,7 @@ public class PlayerClimbingState : PlayerState
                 }
 
             }
-            if (math.abs(_normalClimb.x)>=1)
+            if (math.abs(_normalClimb.x) >= 1)
             {
                 if (_lastDirection.x * direction.x > 0)
                 {
@@ -95,7 +96,7 @@ public class PlayerClimbingState : PlayerState
                 }
             }
         }
-        else _isBothPressed=false;
+        else _isBothPressed = false;
         if (direction.y != 0)
         {
             if (direction.y < 0)
@@ -161,12 +162,12 @@ public class PlayerClimbingState : PlayerState
 
         if (direction != Vector2.zero)
         {
-            _context.playerMovement.Climb(direction);
+            _context.playerClimbing.Climb(direction);
             _lastDirection = direction;
-            Debug.Log(_lastDirection);
+            //Debug.Log(_lastDirection);
         }
         else ChangeAnimationAccordingToLastDirection();
-        _context.playerClimbing.RotateTowardsWall();
+        //_context.playerClimbing.RotateTowardsWall();
         _context.anim.SetFloat("SpeedZ", _normalClimb.y);
         _context.anim.SetFloat("SpeedX", _normalClimb.x);
         _context.anim.SetFloat("Horizontal_Climb", _horizontalClimb);
@@ -182,31 +183,33 @@ public class PlayerClimbingState : PlayerState
     }
     private void ChangeAnimationAccordingToLastDirection()
     {
+        bool any = false;
+        _moveVector = Vector2.zero;
         if (_lastDirection.x * _lastDirection.y != 0)
         {
             if (_normalClimb.x * _normalClimb.y == 1)
             {
                 _diagonalClimbR += math.sqrt(math.pow(_verticalClimbAcceleration * Time.deltaTime, 2) + math.pow(_horizontalClimbAcceleration * Time.deltaTime, 2));
                 _diagonalClimbR = math.clamp(_diagonalClimbR, 1, _cycleDR);
-                //if (_diagonalClimbR < _cycleDR) _context.playerMovement.Climb(_lastDirection);
+                if (_diagonalClimbR < _cycleDR) any = true;
             }
             else
             {
                 _diagonalClimbL += math.sqrt(math.pow(_verticalClimbAcceleration * Time.deltaTime, 2) + math.pow(_horizontalClimbAcceleration * Time.deltaTime, 2));
                 _diagonalClimbL = math.clamp(_diagonalClimbL, 1, _cycleDL);
-                //if (_diagonalClimbL<_cycleDL) _context.playerMovement.Climb(_lastDirection);
+                if (_diagonalClimbL<_cycleDL) any = true;
             }
         }
         if (math.abs(_lastDirection.x) > 0)
         {
+            
             _moveVector.x = _lastDirection.x;
-            _moveVector.y = 0;
+           // _moveVector.y = 0;
             if (math.abs(_normalClimb.x) < 1)
             {
 
                 if (_lastDirection.x < 0)
                 {
-
                     _normalClimb.x -= _accelerationSpeedX * Time.deltaTime;
                     _normalClimb.x = math.clamp(_normalClimb.x, -1, 1);
                 }
@@ -215,12 +218,13 @@ public class PlayerClimbingState : PlayerState
                     _normalClimb.x += _accelerationSpeedX * Time.deltaTime;
                     _normalClimb.x = math.clamp(_normalClimb.x, -1, 1);
                 }
-                _context.playerMovement.Climb(_moveVector);
+                any = true;
+                // _context.playerClimbing.Climb(_moveVector);
             }
             _horizontalClimb += _horizontalClimbAcceleration * Time.deltaTime;
             _horizontalClimb = math.clamp(_horizontalClimb, 1, _cycleX);
 
-            if (_horizontalClimb < _cycleX) _context.playerMovement.Climb(_moveVector);
+            if (_horizontalClimb < _cycleX) any = true;
             if (_lastDirection.y == 0)
             {
                 if (_normalClimb.y > 0)
@@ -239,7 +243,8 @@ public class PlayerClimbingState : PlayerState
         }
         if (math.abs(_lastDirection.y) > 0)
         {
-            _moveVector.x = 0;
+            
+            //_moveVector.x = 0;
             _moveVector.y = _lastDirection.y;
             if (math.abs(_normalClimb.y) < 1)
             {
@@ -248,20 +253,22 @@ public class PlayerClimbingState : PlayerState
                 {
                     _normalClimb.y -= _accelerationSpeedZ * Time.deltaTime;
                     _normalClimb.y = math.clamp(_normalClimb.y, -1, 1);
+
                 }
                 else
                 {
                     _normalClimb.y += _accelerationSpeedZ * Time.deltaTime;
                     _normalClimb.y = math.clamp(_normalClimb.y, -1, 1);
                 }
-                _context.playerMovement.Climb(_moveVector);
+                any = true;
+                //_context.playerClimbing.Climb(_moveVector);
 
             }
 
             _verticalClimb += _verticalClimbAcceleration * Time.deltaTime;
             _verticalClimb = math.clamp(_verticalClimb, 1, _cycleY);
 
-            if (_verticalClimb < _cycleY) _context.playerMovement.Climb(_moveVector);
+            if (_verticalClimb < _cycleY) any = true;
             if (_lastDirection.x == 0)
             {
                 if (_normalClimb.x > 0)
@@ -277,7 +284,7 @@ public class PlayerClimbingState : PlayerState
             }
 
         }
-
+       if(any) _context.playerClimbing.Climb(_moveVector);
     }
     private IEnumerator ClimbCor(Vector2 direction)
     {
@@ -287,7 +294,7 @@ public class PlayerClimbingState : PlayerState
         float _traveledDistance = 0f;
         while(_traveledDistance < _distance)
         {
-            _context.playerMovement.Climb(direction);
+            _context.playerClimbing.Climb(direction);
             _traveledDistance+=_context.playerMovement.ClimbSpeed*Time.deltaTime;
             yield return null;
         }

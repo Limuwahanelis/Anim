@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using UnityEngine.UIElements;
 using static UnityEditor.Experimental.GraphView.GraphView;
 using static UnityEngine.Rendering.DebugUI.Table;
 
@@ -12,6 +14,7 @@ public class PlayerClimbing : MonoBehaviour
 {
     public Action OnStartClimbing;
 
+    [SerializeField] PlayerMovement _playerMovement;
     [SerializeField] CheckForWallContacts _checkForWall;
     [SerializeField] Camera _playerCamera;
 
@@ -21,8 +24,6 @@ public class PlayerClimbing : MonoBehaviour
     [SerializeField] float _checkLength;
     [SerializeField,Range(0,1)] float _wallCheckAcceptance;
     [SerializeField] float _climbSpeed;
-    [SerializeField] Transform _overHeadCheck;
-    [SerializeField] Transform _headCheck;
     [SerializeField] Transform _bodyCheck;
     [SerializeField] LayerMask _climbingMask;
     [SerializeField] Transform _startClimbingTran;
@@ -75,6 +76,18 @@ public class PlayerClimbing : MonoBehaviour
 
     Coroutine _climbingCor;
 
+
+    //////////////////////////////////////
+
+    Transform _helper;
+    Vector3 _targetPos;
+    Vector3 _startPos;
+    bool _isLerping;
+    float t;
+    Vector2 _lastClimbingDirection = Vector2.zero;
+    [SerializeField] float _rotateSpeed = 2f;
+    [SerializeField] float _positionOffset;
+    [SerializeField] float _offsetFromWall;
     // Start is called before the first frame update
     void Start()
     {
@@ -113,7 +126,89 @@ public class PlayerClimbing : MonoBehaviour
     void Update()
     {
     }
+    public void Climb(Vector2 direction)
+    {
+       if (_lastClimbingDirection != direction && direction!=Vector2.zero)
+        {
+            _isLerping = false;
+        }
+        if (!_isLerping)
+        {
+            Vector3 h = _helper.right * direction.x;
+            Vector3 v = _helper.up * direction.y;
+            Vector3 moveDir = (h + v).normalized;
+            bool canMove = CanMove(moveDir);
+            if (!canMove || direction == Vector2.zero)  return;
+            _lastClimbingDirection = direction;
+            t = 0;
+            _isLerping = true;
+            _startPos = transform.position;
+            _targetPos = _helper.position;
 
+        }
+        else
+        {
+            t += Time.deltaTime * _climbSpeed;
+            if(t>1)
+            {
+                t = 1;
+                _isLerping = false;
+            }
+            Vector3 cp = Vector3.Lerp(_startPos, _targetPos, t);
+            _playerMovement.PlayerRB.MovePosition(cp);
+            _playerMovement.PlayerRB.rotation = Quaternion.Slerp(_playerMovement.PlayerRB.rotation, _helper.rotation, Time.deltaTime * _rotateSpeed);
+        }
+    }
+    bool CanMove(Vector3 moveDir)
+    {
+       // Debug.Log(moveDir);
+        Vector3 origin = transform.position;
+        float dis = 1;
+        Vector3 dir = moveDir;
+        Debug.DrawRay(origin, dir * dis, Color.red);
+        RaycastHit hit;
+
+        if (Physics.Raycast(origin, dir, out hit, dis,_climbingMask))// checks if there is wall perpendicualar to us
+        {
+            return false;
+        }
+
+        origin += moveDir * dis;
+        dir = _helper.forward;
+        float dis2 = 0.5f;
+        Debug.DrawRay(origin, dir * dis2, Color.blue);
+        if (Physics.Raycast(origin, dir, out hit, dis, _climbingMask))
+        {
+            _helper.position = PosWithOffset(origin, hit.point);
+            _helper.rotation = Quaternion.LookRotation(-hit.normal);
+            return true;
+        }
+
+
+        origin += dir * dis2;
+        dir = -Vector3.up;
+
+        Debug.DrawRay(origin, dir, Color.yellow);
+        if (Physics.Raycast(origin, dir, out hit, dis2, _climbingMask))
+        {
+            float angle = Vector3.Angle(_helper.up, hit.normal);
+            if (angle < 40)
+            {
+                _helper.position = PosWithOffset(origin, hit.point);
+                _helper.rotation = Quaternion.LookRotation(-hit.normal);
+                return true;
+            }
+        }
+
+        return false;
+    }
+    Vector3 PosWithOffset(Vector3 origin, Vector3 target)
+    {
+        Vector3 direction = origin - target;
+        direction.Normalize();
+        Vector3 offset = direction * _offsetFromWall;
+        return target + offset;
+    }
     private void EnableMoveHandTowardsWall()=> _moveHandTowardsWall = true;
     private void DisableMovehandTowardswall() => _moveHandTowardsWall = false;
 
@@ -153,43 +248,43 @@ public class PlayerClimbing : MonoBehaviour
         _RHIKWallTouch.weight = _touchWall;
         return _touchWall;
     }
-    public void RotateTowardsWall()
-    {
-        float maxXAnlge = 50f;
+    //public void RotateTowardsWall()
+    //{
+    //    float maxXAnlge = 50f;
 
-        float maxRotationStep = 1f;
+    //    float maxRotationStep = 1f;
 
-        float averageHitNormalX = 0f;
-        float averageHitNormalY = 0f;
-        float averageHitNormalZ = 0f;
+    //    float averageHitNormalX = 0f;
+    //    float averageHitNormalY = 0f;
+    //    float averageHitNormalZ = 0f;
 
-        for(int i=0;i<4;i++)
-        {
-            averageHitNormalX += _allHitNormals[i].x;
-            averageHitNormalY += _allHitNormals[i].y;
-            averageHitNormalZ += _allHitNormals[i].z;
-        }
-        aveHitNormal = new Vector3(averageHitNormalX / 4, averageHitNormalY / 4, averageHitNormalZ / 4).normalized;
-        _lineEnd = aveHitNormal;
-        ProjectedAxisAngles(out angleAboutX,out angleAboutZ,_player,aveHitNormal);
+    //    for(int i=0;i<4;i++)
+    //    {
+    //        averageHitNormalX += _allHitNormals[i].x;
+    //        averageHitNormalY += _allHitNormals[i].y;
+    //        averageHitNormalZ += _allHitNormals[i].z;
+    //    }
+    //    aveHitNormal = new Vector3(averageHitNormalX / 4, averageHitNormalY / 4, averageHitNormalZ / 4).normalized;
+    //    _lineEnd = aveHitNormal;
+    //   // ProjectedAxisAngles(out angleAboutX,out angleAboutZ,_player,aveHitNormal);
 
 
-        float characterXRotation = _player.transform.eulerAngles.x;
-        float characterZRotation = _player.transform.eulerAngles.z;
+    //    float characterXRotation = _player.transform.eulerAngles.x;
+    //    float characterZRotation = _player.transform.eulerAngles.z;
 
-        if (characterXRotation > 180f) characterXRotation -= 360;
-        if (characterZRotation > 180f) characterZRotation -= 360;
+    //    if (characterXRotation > 180f) characterXRotation -= 360;
+    //    if (characterZRotation > 180f) characterZRotation -= 360;
 
-        //if (characterXRotation + angleAboutX < -maxXAnlge) angleAboutX = maxXAnlge + characterXRotation;
-        //else if (characterXRotation+angleAboutX>maxXAnlge) angleAboutX = maxXAnlge - characterXRotation;
-        //angleAboutX += 90f;
-        float bodyEulerX = Mathf.MoveTowardsAngle(0, angleAboutX, maxRotationStep);
-        float bodyEulerZ = Mathf.MoveTowardsAngle(0, angleAboutZ, maxRotationStep);
-        Debug.Log(angleAboutX + " " + bodyEulerX);
-        _player.forward = -aveHitNormal;
-        //_player.eulerAngles = new Vector3(_player.eulerAngles.x + bodyEulerX, _player.eulerAngles.y, _player.eulerAngles.z);
+    //    //if (characterXRotation + angleAboutX < -maxXAnlge) angleAboutX = maxXAnlge + characterXRotation;
+    //    //else if (characterXRotation+angleAboutX>maxXAnlge) angleAboutX = maxXAnlge - characterXRotation;
+    //    //angleAboutX += 90f;
+    //    float bodyEulerX = Mathf.MoveTowardsAngle(0, angleAboutX, maxRotationStep);
+    //    float bodyEulerZ = Mathf.MoveTowardsAngle(0, angleAboutZ, maxRotationStep);
+    //    Debug.Log(angleAboutX + " " + bodyEulerX);
+    //    _player.forward = -aveHitNormal;
+    //    //_player.eulerAngles = new Vector3(_player.eulerAngles.x + bodyEulerX, _player.eulerAngles.y, _player.eulerAngles.z);
 
-    }
+    //}
     public void StopClimbing()
     {
         StopCoroutine(_climbingCor);
@@ -199,7 +294,6 @@ public class PlayerClimbing : MonoBehaviour
     public void SetUpLimbs()
     {
         RotateCharacterLimb();
-        //RotateTowardsWall();
     }
 
     public bool CheckForClimbFromAir(Vector2 movingDirection)
@@ -243,15 +337,6 @@ public class PlayerClimbing : MonoBehaviour
     {
         return vector - hitNormal * Vector3.Dot(vector, hitNormal); //Vector3.ProjectOnPlane(vector, hitNormal);
     }
-    void ProjectedAxisAngles(out float angleAboutX, out float angleAboutZ, Transform limbTargetTransform, Vector3 hitNormal)
-    {
-        Vector3 xAxisProjected = ProjectOnContactPlane(limbTargetTransform.forward,hitNormal).normalized;
-        Vector3 zAxisProjected = ProjectOnContactPlane(limbTargetTransform.right, hitNormal).normalized;
-        Vector3 yAxisProjected = ProjectOnContactPlane(limbTargetTransform.up,hitNormal).normalized;
-
-        angleAboutX = Vector3.SignedAngle(limbTargetTransform.forward, xAxisProjected, limbTargetTransform.right);
-        angleAboutZ = Vector3.SignedAngle(limbTargetTransform.right, zAxisProjected, limbTargetTransform.forward);
-    }
 
     private void RotateCharacterLimb()
     {
@@ -259,35 +344,38 @@ public class PlayerClimbing : MonoBehaviour
         {
             CastRayForLimb(_limbsTransform[i], addedHeight, out Vector3 hitPoint, out _, out Vector3 hitNormal, out _allGroundSphereCastHits[i]);
             _allHitNormals[i] = hitNormal;
-            //if (i == 0) Debug.Log(hitNormal);
             if (_allGroundSphereCastHits[i] == true)
             {
-                ProjectedAxisAngles(out angleAboutX, out angleAboutZ, _limbsTransform[i], _allHitNormals[i]);
 
-                _targets[i].position = hitPoint; // maybe add offset (target is in ankle)
-                //_targets[i].rotation = _limbsTransform[i].rotation;
-                //_targets[i].rotation *= _targetsOffset[i];
-                //if (i == 0) Debug.Log(angleAboutX +" "+angleAboutZ);
-                //_targets[i].localEulerAngles = new Vector3(_targets[i].localEulerAngles.x + angleAboutX, _targets[i].localEulerAngles.y, _targets[i].localEulerAngles.z + angleAboutZ);
+                _targets[i].position = hitPoint;// maybe add offset (target is in ankle)
+                Vector3 tmp = _targets[i].localPosition;
+                tmp.z-= _limbsOffsets[i]; ;
+                _targets[i].localPosition= tmp;
+                _targets[i].rotation = Quaternion.LookRotation(-_allHitNormals[i]);
             }
             else
             {
                 _targets[i].position = _limbsTransform[i].position;
-                //_targets[i].rotation = _limbsTransform[i].rotation;
-                //_targets[i].rotation *= _targetsOffset[i];
             }
         }
     }
 
     IEnumerator StartClimbingCor()
     {
+        InitHelper();
         _playerRigidbody.useGravity = false;
+        _playerRigidbody.isKinematic = true;
         float value = 0;
         Vector3 startClimbingPos = _startClimbingTran.position;
         Vector3 pos = transform.position;
+        Vector3 newPos = PosWithOffset(pos, startClimbingPos); //transform.position;
+        newPos.x = pos.x;
         while (value < 1f)
         {
-            transform.position = new Vector3(transform.position.x, math.lerp(pos.y, startClimbingPos.y, value), startClimbingPos.z);
+
+            newPos.y = math.lerp(pos.y, startClimbingPos.y, value);
+            _playerMovement.PlayerRB.Move(newPos, _playerMovement.PlayerRB.rotation);
+            
             value += Time.deltaTime * _startClimbingSpeed;
             yield return null;
         }
@@ -323,4 +411,14 @@ public class PlayerClimbing : MonoBehaviour
     {
         Gizmos.DrawLine(Vector3.zero, _lineEnd*10f);
     }
+    ///////////////////
+    
+    void InitHelper()
+    {
+        _helper = new GameObject().transform;
+        _helper.name = "climb_helper";
+        //CheckForClimb();
+    }
+
+
 }

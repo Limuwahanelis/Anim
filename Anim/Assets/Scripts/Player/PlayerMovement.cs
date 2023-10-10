@@ -23,11 +23,13 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _fastRunSpeed;
     [SerializeField] float _backMoveSpeed;
     [SerializeField] Rigidbody _rb;
+    public Rigidbody PlayerRB => _rb;
     [SerializeField] Ringhandle _jumphandle;
     [SerializeField] Camera _cam;
     [SerializeField] float _jumpForce;
     [SerializeField] Transform _playerController;
     [SerializeField] Transform _playerBody;
+    public Transform PlayerBody => _playerBody;
     private float _rotationAngle;
     // Start is called before the first frame update
     void Start()
@@ -65,11 +67,7 @@ public class PlayerMovement : MonoBehaviour
         _rb.useGravity = false;
         _rb.velocity = Vector3.zero;
     }
-    public void Climb(Vector2 direction)
-    {
-        Vector3 aa = _rb.position + (_playerBody.right * direction.x* _climbSpeed * Time.deltaTime + _playerBody.up * direction.y * _climbSpeed * Time.deltaTime);
-        _rb.MovePosition(aa);
-    }
+
     public void Move(Vector2 direction, MoveState moveState)
     {
         if(direction!=Vector2.zero)
