@@ -12,11 +12,13 @@ public class ffffs : MonoBehaviour
     Vector3 targetPos;
     Quaternion startRot;
     Quaternion targetRot;
-    public float possitionOffset;
+    //public float possitionOffset;
+    public float rayTowardsMoveDir;
     public float offsetFromWall = 0.3f;
     public float speed_multiplier = 0.2f;
     public float climbSpeed = 3f;
     public float rotateSpeed = 2f;
+    public float rayForwadsWall = 1;
     Transform helper;
     float delta;
     public void CheckForClimb()
@@ -92,22 +94,36 @@ public class ffffs : MonoBehaviour
     bool CanMove(Vector3 moveDir)
     {
         Vector3 origin = transform.position;
-        float dis = possitionOffset;
+        float dis = rayTowardsMoveDir; //possitionOffset
         Vector3 dir = moveDir;
         Debug.DrawRay(origin, dir * dis, Color.red);
         RaycastHit hit;
 
-
+        //raycast towards the irection you want to move
         if (Physics.Raycast(origin, dir, out hit, dis))// checks if there is wall perpendicualar to us
         {
+            //check if its a corner
             return false;
         }
 
         origin += moveDir * dis;
         dir = helper.forward;
-        float dis2 = 0.5f;
+        float dis2 = rayForwadsWall;
+
+        //raycast forwards towards the wall
         Debug.DrawRay(origin, dir * dis2, Color.blue);
-        if (Physics.Raycast(origin, dir, out hit, dis))
+        if (Physics.Raycast(origin, dir, out hit, dis2))
+        {
+            helper.position = PosWithOffset(origin, hit.point);
+            helper.rotation = Quaternion.LookRotation(-hit.normal);
+            return true;
+        }
+
+        origin = origin + (dir * dis2);
+        dir = -moveDir;
+
+        // raycast for around corners 
+        if(Physics.Raycast(origin,dir,out hit,rayForwadsWall))
         {
             helper.position = PosWithOffset(origin, hit.point);
             helper.rotation = Quaternion.LookRotation(-hit.normal);
@@ -117,10 +133,9 @@ public class ffffs : MonoBehaviour
         origin += dir * dis2;
         dir = -Vector3.up;
 
-        Debug.DrawRay(origin, dir, Color.yellow);
         if (Physics.Raycast(origin, dir, out hit, dis2))
         {
-            float angle = Vector3.Angle(helper.up, hit.normal);
+            float angle = Vector3.Angle(-helper.forward, hit.normal);
             if (angle < 40)
             {
                 helper.position = PosWithOffset(origin, hit.point);
@@ -128,6 +143,18 @@ public class ffffs : MonoBehaviour
                 return true;
             }
         }
+
+        //Debug.DrawRay(origin, dir, Color.yellow);
+        //if (Physics.Raycast(origin, dir, out hit, dis2))
+        //{
+        //    float angle = Vector3.Angle(helper.up, hit.normal);
+        //    if (angle < 40)
+        //    {
+        //        helper.position = PosWithOffset(origin, hit.point);
+        //        helper.rotation = Quaternion.LookRotation(-hit.normal);
+        //        return true;
+        //    }
+        //}
 
         return false;
     }
