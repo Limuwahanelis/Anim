@@ -31,8 +31,14 @@ public class PlayerCombat : MonoBehaviour
     public void AttachWeaponToRightHand()
     {
         _weaponObject.transform.position = _rightHandWeaponHold.transform.position;
-        _weaponObject.transform.rotation = _backWeaponHold.transform.rotation;
         _weaponObject.transform.parent = _rightHandWeaponHold;
+        _weaponObject.transform.localRotation = Quaternion.identity; //_backWeaponHold.transform.rotation;
+    }
+    public void MoveWeaponToSeath()
+    {
+        _weaponObject.transform.position = _backWeaponHold.transform.position;
+        _weaponObject.transform.parent = _backWeaponHold;
+        _weaponObject.transform.localRotation = Quaternion.identity; //_backWeaponHold.transform.rotation;
     }
     public void ResetComboCounter()
     {
@@ -42,10 +48,9 @@ public class PlayerCombat : MonoBehaviour
     {
         if (_comboAttackCounter > _comboList1.comboList.Count)
         {
-           // attackState.StartWaitingForAttackEnd("Attack "+_comboAttackCounter);
             return;
         }
-        if(_player.animManager.GetAnimationCurrentDuration("Attack "+_comboAttackCounter) >= _comboList1.comboList[_comboAttackCounter-1].nextAttackWindowStart && _player.animManager.GetAnimationCurrentDuration("Attack " + _comboAttackCounter) <= _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd)
+        if(_player.animManager.GetAnimationCurrentDuration("Attack "+_comboAttackCounter) >= _comboList1.comboList[_comboAttackCounter-1].nextAttackWindowStart / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter) && _player.animManager.GetAnimationCurrentDuration("Attack " + _comboAttackCounter)  <= _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter))
         {
             attackState.ResetTimer();
             _player.anim.SetTrigger("Attack");
@@ -53,14 +58,4 @@ public class PlayerCombat : MonoBehaviour
             attackState.StartWaitingForAttackEnd("Attack " + _comboAttackCounter);
         }
     }
-
-    //IEnumerator WaitForAttackEndCor(float attackLength)
-    //{
-    //    float timer = 0;
-    //    while(timer<attackLength)
-    //    {
-    //        yield return null;
-    //    }
-    //    _player.ChangeState(new)
-    //}
 }

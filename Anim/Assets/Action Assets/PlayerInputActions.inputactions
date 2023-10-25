@@ -60,9 +60,27 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Dodge",
+                    "name": "Walk_Swap",
                     "type": "Button",
-                    "id": "cd2eb179-818c-4813-b98a-e8a69cafe9de",
+                    "id": "9e604e02-d690-47ca-ac3e-e09ab86e367f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "9729a566-41e7-481c-babb-feca3a31505d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Drop",
+                    "type": "Button",
+                    "id": "69d28ad9-bf36-4a37-a92f-a8b7eed2d838",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -325,12 +343,34 @@
                 },
                 {
                     "name": "",
-                    "id": "70037434-81ae-41ae-8cb3-0d28bb620ddb",
+                    "id": "38ab314f-38df-4480-a5cf-11ce13d8a3d7",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Walk_Swap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ac1d63ef-5712-4dc5-bffe-4dca262cd26d",
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Dodge",
+                    "action": "Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "67427692-5c68-4900-b893-857f1a2f3d0f",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Drop",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

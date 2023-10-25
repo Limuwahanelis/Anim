@@ -12,10 +12,16 @@ public abstract class PlayerState
     }
     public abstract void InterruptState();
     public abstract void Update();
+    public virtual void FixedUpdate() { }
     public abstract void SetUpState();
     public virtual void Move(Vector2 direction) { }
     public virtual void Jump() { }
     public virtual void Attack() { }
 
-    public virtual void Dodge() { }
+    public virtual void Dash() { }
+
+    public virtual void ChangeMove() { }
+
+    public virtual void Drop() { }
 }
+

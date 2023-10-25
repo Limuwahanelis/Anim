@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
@@ -8,17 +10,20 @@ public class CameraController : MonoBehaviour
 
     float screenX = Screen.width;
     float screenY = Screen.height;
-
+    float scrollY = 0;
 
 
     [SerializeField] Vector3 offset;
 
     [SerializeField] float speedH = 2.0f;
     [SerializeField] float speedV = 2.0f;
+    [SerializeField] float scrollSpeed = 0.2f;
+    private float scrollDir;
 
     [SerializeField] float yaw = 0.0f;
     [SerializeField] float pitch = 0.0f;
 
+    [SerializeField] InputActionReference scroll;
 
     [SerializeField] GameObject focalPoint;
 
@@ -32,7 +37,9 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        offset = transform.position - focalPoint.transform.position;
+        offset = transform.position - focalPoint.transform.position ;
+        scroll.action.Enable();
+        scroll.action.performed += x => { scrollDir = math.clamp(x.ReadValue<float>(), -1, 1); };
     }
 
     // Update is called once per frame
@@ -44,6 +51,7 @@ public class CameraController : MonoBehaviour
             return;
         yaw += speedH * Input.GetAxis("Mouse X");
         pitch += speedV * (-Input.GetAxis("Mouse Y"));
+        scrollY += scrollSpeed * scrollDir;
         if (Input.GetKeyDown(KeyCode.L))
         {
             if (locked)
@@ -60,9 +68,11 @@ public class CameraController : MonoBehaviour
         //if (pitch <= -2.5f)
         //    pitch = -2.5f;
 
-        transform.eulerAngles = new Vector3(pitch, yaw, 0.0f);
+        transform.eulerAngles = new Vector3(pitch, yaw);
         _rotation = Quaternion.Euler(pitch, yaw, 0);
-        transform.position = focalPoint.transform.position - (_rotation * (-offset));
+        //offset = offset + transform.forward  * scrollSpeed * scrollDir; 
+        transform.position = focalPoint.transform.position + (_rotation * offset)+ transform.forward * scrollY;
+        //transform.position += ;
     }
     private void FixedUpdate()
     {
@@ -85,5 +95,9 @@ public class CameraController : MonoBehaviour
     public float GetYaw()
     {
         return yaw;
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(transform.position, transform.position + transform.forward * 10);
     }
 }

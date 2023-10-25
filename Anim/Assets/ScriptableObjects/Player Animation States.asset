@@ -15,24 +15,62 @@ MonoBehaviour:
   animations:
   - name: Movement
     duration: 0
+    speed: 0
   - name: Jump
     duration: 1.6666667
+    speed: 1
   - name: Fall loop
     duration: 1.0666667
+    speed: 1
   - name: Landing
     duration: 1.0666667
-  - name: Sprinting Forward Roll30
-    duration: 1.1666667
-  - name: Unseath
-    duration: 1
+    speed: 1
+  - name: Movement 0
+    duration: 0
+    speed: 0
+  - name: Crouched To Sprinting
+    duration: 0.5
+    speed: 1
+  - name: Fast Run
+    duration: 0.53333336
+    speed: 1
+  - name: Run To Stop
+    duration: 0.90000004
+    speed: 1
+  - name: Climbing 1
+    duration: 1.5666667
+    speed: 1
+  - name: Blend Tree
+    duration: 0
+    speed: 0
+  - name: Jump 0
+    duration: 1.6666667
+    speed: 1
+  - name: Climbing 2
+    duration: 0
+    speed: 0
+  - name: Climbing pose 1
+    duration: 0
+    speed: 1
+  - name: Climbing pose 2
+    duration: 0
+    speed: 1
+  - name: Horizontal pose
+    duration: 0
+    speed: 1
+  - name: Climb UR Pose 2
+    duration: 0
+    speed: 1
+  - name: Climb UL Pose 2
+    duration: 0
+    speed: 1
   - name: Attack 1
     duration: 1.2
+    speed: 0.75
   - name: Attack 2
     duration: 0.56666666
+    speed: 0.75
   - name: Attack 3
     duration: 1.2
-  - name: Combat Move
-    duration: 0
-  - name: Dodge
-    duration: 1.2
+    speed: 0.75
   animatorController: {fileID: 9100000, guid: 7f32f6cfbf66de845b55e5ed4284ba3f, type: 2}

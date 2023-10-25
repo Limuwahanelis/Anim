@@ -24,12 +24,35 @@ public class PlayerCombatState : PlayerState
     public override void Move(Vector2 direction)
     {
         _direction=direction;
-        if (direction.x==0)
+       SetAnimation(direction);
+        _context.playerMovement.Move(direction,PlayerMovement.MoveState.RUN);
+
+    }
+
+    public override void SetUpState()
+    {
+        animSpeedX = _context.anim.GetFloat("SpeedX");
+        animSpeedZ = _context.anim.GetFloat("SpeedZ");
+        _context.playerCombat.ResetComboCounter();
+
+    }
+    public override void Attack()
+    {
+        _context.ChangePlayerState(new PlayerAttackingState(_context));
+        
+    }
+    public override void Dash()
+    {
+        _context.ChangePlayerState(new PlayerDodgingState(_context, this,_direction));
+    }
+    private void SetAnimation(Vector2 direction)
+    {
+        if (direction.x == 0)
         {
             if (animSpeedX > 0)
             {
                 animSpeedX -= _stoppingSpeedX * Time.deltaTime;
-                animSpeedX=math.clamp(animSpeedX, 0, 1);
+                animSpeedX = math.clamp(animSpeedX, 0, 1);
             }
             else
             {
@@ -51,7 +74,7 @@ public class PlayerCombatState : PlayerState
             }
         }
 
-        if(direction.y==0)
+        if (direction.y == 0)
         {
             if (animSpeedZ > 0)
             {
@@ -77,26 +100,10 @@ public class PlayerCombatState : PlayerState
                 animSpeedZ = math.clamp(animSpeedZ, -1, 1);
             }
         }
-        _context.playerMovement.Move(direction,true);
+
 
         _context.anim.SetFloat("SpeedX", animSpeedX);
         _context.anim.SetFloat("SpeedZ", animSpeedZ);
-    }
-
-    public override void SetUpState()
-    {
-        _context.anim.SetTrigger("Unseath");
-        _context.playerCombat.ResetComboCounter();
-
-    }
-    public override void Attack()
-    {
-        _context.ChangePlayerState(new PlayerAttackingState(_context,this));
-        
-    }
-    public override void Dodge()
-    {
-        _context.ChangePlayerState(new PlayerDodgingState(_context, this,_direction));
     }
     public override void InterruptState()
     {

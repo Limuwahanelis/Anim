@@ -60,7 +60,7 @@ public class AnimationManager : MonoBehaviour
         if (_currentTimer != null) StopCoroutine(_currentTimer);
         _overPlayAnimationEnded = true;
 
-        _anim.Play(Animator.StringToHash(clipToPlayName)); //clipToPlay.nameHash);
+        _anim.Play(Animator.StringToHash(clipToPlayName));
         _currentAnimation = clipToPlayName;
     }
 
@@ -69,16 +69,14 @@ public class AnimationManager : MonoBehaviour
         if (name == "Empty") return 0;
         float clipDuration = 0;
         clipDuration = animList.animations.Find(x => x.name == name).duration;
-        //for (int i = 0; i < animatorController.layers[0].stateMachine.states.Length; i++)
-        //{
-        //    AnimatorState state = animatorController.layers[0].stateMachine.states[i].state;
-        //    if (state.name == name)
-        //    {
-        //        clipDuration = state.motion.averageDuration;
-        //    }
-        //}
-        //Debug.Log(clipDuration);
         return clipDuration;
+    }
+    public float GetAnimationSpeed(string name)
+    {
+        if (name == "Empty") return 0;
+        float clipSpeed = 0;
+        clipSpeed = animList.animations.Find(x => x.name == name).speed;
+        return clipSpeed;
     }
     private void Update()
     {

@@ -38,10 +38,6 @@ public class PlayerInputHandler : MonoBehaviour
         _isFocused = inputValue.Get<float>()>0?true:false;
         teleportSkill.enabled = _isFocused;
     }
-    void OnDodge(InputValue inputValue)
-    {
-        _player.CurrentPlayerState.Dodge();
-    }
     void OnFire(InputValue inputValue)
     {
         if(_isFocused) teleportSkill.Perform();
@@ -50,5 +46,20 @@ public class PlayerInputHandler : MonoBehaviour
             _player.CurrentPlayerState.Attack();
         }
 
+    }
+
+    void OnWalk_Swap(InputValue inputValue)
+    {
+        Debug.Log(inputValue.Get<float>());
+        _player.CurrentPlayerState.ChangeMove();
+    }
+
+    void OnDash(InputValue inputValue)
+    {
+        _player.CurrentPlayerState.Dash();
+    }
+    void OnDrop(InputValue inputValue)
+    {
+        _player.CurrentPlayerState.Drop();
     }
 }

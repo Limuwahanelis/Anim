@@ -12,4 +12,7 @@ public class PlayerContext
     public PlayerChecks playerChecks;
     public CorutineHolder corutineHolder;
     public PlayerCombat playerCombat;
+    public StaminaBar staminaBar;
+    public MaterializeObject materializeObject;
+    public PlayerClimbing playerClimbing;
 }
