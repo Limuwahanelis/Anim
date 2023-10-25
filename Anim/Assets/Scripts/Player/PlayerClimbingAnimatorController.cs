@@ -18,7 +18,7 @@ public class PlayerClimbingAnimatorController : MonoBehaviour
     float _verticalClimbAcceleration = 1.5f;
     float _diagonalClimbL = 0f;
     float _diagonalClimbR = 0f;
-    int _cycleX = 0;
+    int _cycleX = 1;
     int _cycleY = 1;
     int _cycleDL = 1;
     int _cycleDR = 1;
@@ -68,9 +68,9 @@ public class PlayerClimbingAnimatorController : MonoBehaviour
                 {
                     if (_normalClimb.x <= -1)
                     {
-                        _horizontalClimb = _cycleX + delta;
-                        _cycleX = (int)math.floor(_horizontalClimb);
-                        if (_cycleX >= 2) _cycleX = 0;
+                        _horizontalClimb = _cycleX - 1 + delta;
+                        _cycleX = (int)math.floor(_horizontalClimb + 1);
+                        if (_cycleX >= 3) _cycleX = 1;
                     }
                     else
                     {
@@ -94,9 +94,9 @@ public class PlayerClimbingAnimatorController : MonoBehaviour
                 {
                     if (_normalClimb.x >= 1)
                     {
-                        _horizontalClimb = _cycleX + delta;
-                        _cycleX = (int)math.floor(_horizontalClimb);
-                        if (_cycleX >= 2) _cycleX = 0;
+                        _horizontalClimb = _cycleX - 1 + delta;
+                        _cycleX = (int)math.floor(_horizontalClimb + 1);
+                        if (_cycleX >= 3) _cycleX = 1;
                     }
                     else
                     {
