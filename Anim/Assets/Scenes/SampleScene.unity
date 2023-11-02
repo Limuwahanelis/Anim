@@ -1350,7 +1350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fontSettings: {fileID: 11400000, guid: a8e28a67f5b0f8e4ba2b95aea316c611, type: 2}
-  _damageNumbersPool: {fileID: 0}
+  _damageNumbersPool: {fileID: 1846848778}
   maxHP:
     useConstant: 1
     constantValue: 20
@@ -1359,7 +1359,7 @@ MonoBehaviour:
     useConstant: 1
     constantValue: 20
     variable: {fileID: 0}
-  afflictedElement: 0
+  afflictedElement: 1
 --- !u!65 &681919725
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7454,10 +7454,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1846848777}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9795b49674ee4447b9748bb2880ea52, type: 3}
+  m_Script: {fileID: 11500000, guid: 870f99bad0598f3469b8e1076a9e0984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damageNumberPrefab: {fileID: 0}
+  _damageNumberPrefab: {fileID: 4125877513818925559, guid: 4a2c8a8effa6b574ea8c4a28690c1abb,
+    type: 3}
 --- !u!4 &1846848779
 Transform:
   m_ObjectHideFlags: 0
@@ -18953,14 +18954,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Text (TMP)
       objectReference: {fileID: 0}
+    - target: {fileID: 6018087437980390147, guid: 4a2c8a8effa6b574ea8c4a28690c1abb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6018087437980390147, guid: 4a2c8a8effa6b574ea8c4a28690c1abb,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a2c8a8effa6b574ea8c4a28690c1abb, type: 3}
 --- !u!4 &6449188664313029348
 Transform:

@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class HealthSystem : MonoBehaviour,IDamagable
 {
     [SerializeField] ElementalFontSettings fontSettings;
-    [SerializeField] DamageNumbersPool _damageNumbersPool;
+    [SerializeField] FloatingTextPool _damageNumbersPool;
     [SerializeField] IntReference maxHP;
     [SerializeField] IntReference currentHP;
     public ReactionCalculator.Element afflictedElement;
@@ -25,8 +25,13 @@ public class HealthSystem : MonoBehaviour,IDamagable
         int recievedDmg;
         ReactionCalculator.ElementalReaction elementalReaction = ReactionCalculator.CalculateDamage(afflictedElement, damageInfo, out recievedDmg);
         Debug.Log(elementalReaction);
-        DamageNumber num= _damageNumbersPool.GetDamageNumber();
-        num.SetNumber(recievedDmg, elementalReaction != ReactionCalculator.ElementalReaction.NONE ? fontSettings.elementalReactionFonts[((int)elementalReaction)] : fontSettings.elementFonts[((int)damageInfo.element)],transform.parent);
+        FloatingText num= _damageNumbersPool.GetText();
+        if (elementalReaction != ReactionCalculator.ElementalReaction.NONE)
+        {
+            FloatingText reaction = _damageNumbersPool.GetText();
+            reaction.SetText(elementalReaction.ToString(), fontSettings.elementalReactionFonts[((int)elementalReaction)],transform.parent);
+        }
+        num.SetText(recievedDmg,fontSettings.elementFonts[((int)damageInfo.element)],transform.parent);
         currentHP.value -= recievedDmg;
         OnHitEvent?.Invoke();
         if (currentHP.value <= 0) Kill();

@@ -209,6 +209,9 @@ MonoBehaviour:
   _anim: {fileID: 1942912662569847487}
   _lookAtConstraint: {fileID: 4150219696931554165}
   _fontAnchoredPosition: {x: 0, y: 1.78, z: 0}
+  _maxFontRandFactor: {x: 2, y: 1}
+  _duration: 1
+  _verticalDistance: 1.5
 --- !u!95 &1942912662569847487
 Animator:
   serializedVersion: 5
@@ -217,7 +220,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6018087437980390147}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 3e6f701356a90b64380d3b39c94a4c24, type: 2}
   m_CullingMode: 0

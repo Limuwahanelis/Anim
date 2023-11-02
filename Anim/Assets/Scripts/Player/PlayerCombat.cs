@@ -10,8 +10,14 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] Transform _backWeaponHold;
     [SerializeField] ComboList _comboList1;
     [SerializeField] Player _player;
+    [SerializeField] PlayerAnimatorEvents _playerAnimatorEvents;
     private int _comboAttackCounter=1;
 
+    private void Awake()
+    {
+        _playerAnimatorEvents.OnStartCheckForEnemyColliders.AddListener(StartCheckingForEnemyCollider);
+        _playerAnimatorEvents.OnStopCheckForEnemyColliders.AddListener(StopCheckingForEnemyCollider);
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +28,14 @@ public class PlayerCombat : MonoBehaviour
     void Update()
     {
         
+    }
+    private void StartCheckingForEnemyCollider()
+    {
+        SetCheckForEnemies(true);
+    }
+    private void StopCheckingForEnemyCollider()
+    {
+        SetCheckForEnemies(false);
     }
     public void SetCheckForEnemies(bool value)
     {
@@ -52,11 +66,20 @@ public class PlayerCombat : MonoBehaviour
         }
         if(_player.animManager.GetAnimationCurrentDuration("Attack "+_comboAttackCounter) >= _comboList1.comboList[_comboAttackCounter-1].nextAttackWindowStart / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter) && _player.animManager.GetAnimationCurrentDuration("Attack " + _comboAttackCounter)  <= _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter))
         {
-            _weapon.ResetTargets();
+            
             attackState.ResetTimer();
             _player.anim.SetTrigger("Attack");
             _comboAttackCounter++;
             attackState.StartWaitingForAttackEnd("Attack " + _comboAttackCounter);
         }
+    }
+    public void ResetWeaponDamageables()
+    {
+        _weapon.ResetTargets();
+    }
+    private void OnDestroy()
+    {
+        _playerAnimatorEvents.OnStartCheckForEnemyColliders.RemoveListener(StartCheckingForEnemyCollider);
+        _playerAnimatorEvents.OnStopCheckForEnemyColliders.RemoveListener(StopCheckingForEnemyCollider);
     }
 }

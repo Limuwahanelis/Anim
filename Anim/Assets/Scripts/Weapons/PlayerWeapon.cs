@@ -17,10 +17,11 @@ public abstract class PlayerWeapon : MonoBehaviour
     public void SetCheckForCollisions(bool value)
     {
         _isCheckingForCollisions = value;
-        if (!value) _damagables.Clear();
+        if (value) _damagables.Clear();
     }
     public void ResetTargets()
     {
+        Debug.Log("Clear");
         _damagables.Clear();
     }
 }
