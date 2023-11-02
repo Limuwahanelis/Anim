@@ -6,4 +6,5 @@ public class DamageInfo
 {
     public int damage;
     public ReactionCalculator.Element element;
+    public int playerLevel;
 }

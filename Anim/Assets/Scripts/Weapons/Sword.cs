@@ -28,6 +28,7 @@ public class Sword : PlayerWeapon
             {
                 damage = _dmg,
                 element = element,
+                playerLevel = 10
             };
             if (!_damagables.Contains(damagable))
             {

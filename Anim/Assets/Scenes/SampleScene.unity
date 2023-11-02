@@ -1353,7 +1353,7 @@ MonoBehaviour:
   _damageNumbersPool: {fileID: 1846848778}
   maxHP:
     useConstant: 1
-    constantValue: 20
+    constantValue: 9999
     variable: {fileID: 0}
   currentHP:
     useConstant: 1
@@ -2977,6 +2977,7 @@ MonoBehaviour:
   _backWeaponHold: {fileID: 260206496}
   _comboList1: {fileID: 11400000, guid: bcaba5178d554484bb29f31d08936285, type: 2}
   _player: {fileID: 1215438557}
+  _playerAnimatorEvents: {fileID: 7495358341537164021}
 --- !u!114 &1215438555
 MonoBehaviour:
   m_ObjectHideFlags: 0
