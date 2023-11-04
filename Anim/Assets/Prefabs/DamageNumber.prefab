@@ -209,7 +209,7 @@ MonoBehaviour:
   _anim: {fileID: 1942912662569847487}
   _lookAtConstraint: {fileID: 4150219696931554165}
   _fontAnchoredPosition: {x: 0, y: 1.78, z: 0}
-  _maxFontRandFactor: {x: 2, y: 1}
+  _maxFontRandFactor: {x: 1, y: 0.7}
   _duration: 1
   _verticalDistance: 1.5
 --- !u!95 &1942912662569847487
