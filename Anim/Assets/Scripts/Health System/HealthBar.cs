@@ -35,6 +35,11 @@ public class HealthBar : MonoBehaviour
         _renderer.SetPropertyBlock(_propertyBlock);
 
     }
+    public void SetMaxHealth(int value)
+    {
+        _maxHP = value;
+        SetHealth(_maxHP);
+    }
     public void ReduceHP(int value)
     {
         StartCoroutine(HealthReduceHealthCor());
