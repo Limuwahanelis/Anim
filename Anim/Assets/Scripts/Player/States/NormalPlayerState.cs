@@ -9,14 +9,19 @@ public class NormalPlayerState : PlayerState
     float _accelerationSpeedZ = 3f;
     float animSpeedZ = 0;
     bool _isMoving;
+    Vector2 _movingDirection;
     public NormalPlayerState(PlayerContext context) : base(context)
     {
         animSpeedZ = _context.anim.GetFloat("SpeedZ");
+       // _context.playerClimbing.OnStartClimbing += ChangeToClimbingState;
     }
 
     public override void Update()
     {
-
+        if( _context.playerClimbing.MoveHandTowardsWall(_movingDirection)>=1)
+        {
+            _context.ChangePlayerState(new PlayerJumpingOnWallToClimb(_context));
+        }
     }
 
     public override void SetUpState()
@@ -25,6 +30,7 @@ public class NormalPlayerState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
+        _movingDirection = direction;
         if (direction.x == 0 && direction.y == 0)
         {
             _isMoving = false;
@@ -61,20 +67,11 @@ public class NormalPlayerState : PlayerState
 
     public override void InterruptState()
     {
-
     }
     public override void Attack()
     {
         _context.ChangePlayerState(new PlayerAttackingState(_context));
     }
-    public override void ChangeMove()
-    {
-        _context.ChangePlayerState(new PlayerWalkingState(_context));
-
-    }
-    public override void Dash()
-    {
-
-        _context.ChangePlayerState(new PlayerFastRunState(_context));
-    }
+    public override void ChangeMove()=>_context.ChangePlayerState(new PlayerWalkingState(_context));
+    public override void Dash()=> _context.ChangePlayerState(new PlayerFastRunState(_context));
 }

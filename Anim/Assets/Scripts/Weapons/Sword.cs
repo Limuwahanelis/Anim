@@ -17,17 +17,26 @@ public class Sword : PlayerWeapon
     {
         
     }
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (!_isCheckingForCollisions) return;
+
         IDamagable damagable = other.GetComponent<IDamagable>();
         if(damagable!=null)
         {
+            _damageInfo = new DamageInfo()
+            {
+                damage = _dmg,
+                element = element,
+                playerLevel = 10
+            };
             if (!_damagables.Contains(damagable))
             {
                 _damagables.Add(damagable);
-                damagable.TakeDamage(_dmg);
+                damagable.TakeDamage(_damageInfo);
             }
         }
     }
+
+
 }

@@ -58,4 +58,8 @@ public class PlayerInputHandler : MonoBehaviour
     {
         _player.CurrentPlayerState.Dash();
     }
+    void OnDrop(InputValue inputValue)
+    {
+        _player.CurrentPlayerState.Drop();
+    }
 }

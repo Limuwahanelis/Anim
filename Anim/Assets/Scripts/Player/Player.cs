@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     [SerializeField] CorutineHolder _corutineHolder;
     [SerializeField] StaminaBar _staminaBar;
     [SerializeField] MaterializeObject materializeObject;
+    [SerializeField] PlayerClimbing _playerClimbing;
     private PlayerState _currentPlayerState;
     private PlayerContext _context;
     // Start is called before the first frame update
@@ -35,7 +36,8 @@ public class Player : MonoBehaviour
             corutineHolder = _corutineHolder,
             playerCombat = _playerCombat,
             staminaBar = _staminaBar,
-            materializeObject = materializeObject
+            materializeObject = materializeObject,
+            playerClimbing = _playerClimbing
         };
         _currentPlayerState = new NormalPlayerState(_context);
     }
@@ -45,7 +47,10 @@ public class Player : MonoBehaviour
     {
         _currentPlayerState.Update();
     }
-
+    private void FixedUpdate()
+    {
+        _currentPlayerState.FixedUpdate();
+    }
     public void ChangeState(PlayerState newState)
     {
         if(_printState) Debug.Log(newState.GetType());
