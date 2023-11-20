@@ -61,7 +61,7 @@ public class NormalPlayerState : PlayerState
         if (direction != Vector2.zero)
         {
             Vector3 targetPos;
-            if ( _context.playerVaulting.DD(direction, out targetPos))
+            if ( _context.playerVaulting.CheckVault( out targetPos))
             {
                 
                 _context.ChangePlayerState?.Invoke(new PlayerVaultingState(_context,targetPos));

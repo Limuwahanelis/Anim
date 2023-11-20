@@ -29,17 +29,13 @@ public class PlayerVaulting : MonoBehaviour
     {
 
     }
-    public bool DD (Vector2 direction, out Vector3 targetPos)
-    {
-        return AA(transform.forward,out targetPos);
-    }
-
-    public bool AA(Vector3 moveDir, out Vector3 targetPos)
+    public bool CheckVault (out Vector3 targetPos)
     {
         // Debug.Log(moveDir);
+        Vector3 moveDir = transform.forward;
         targetPos = Vector3.zero;
         Vector3 origin = transform.position;
-        origin.y = transform.position.y+ _feetOffset;
+        origin.y = transform.position.y + _feetOffset;
 
         float dis = _rayTowardsMoveDir;
         Vector3 dir = moveDir;
@@ -61,17 +57,15 @@ public class PlayerVaulting : MonoBehaviour
                 Debug.DrawRay(origin, dir * _playerHeight, Color.green);
                 if (Physics.Raycast(origin, dir, out hit2, _playerHeight, _climbingMask))
                 {
-                    Debug.Log("Vault");
                     targetPos = hit2.point;
                     return true;
                 }
             }
             else return false;
         }
-        
+
         return false;
     }
-
     private void OnDrawGizmosSelected()
     {
         if(!_drawDebug) return;
