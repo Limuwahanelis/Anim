@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
@@ -13,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public Action OnEndedClimb;
+    public Vector3 PlayerPosition=> transform.position;
     [SerializeField] float _climbSpeed=2f;
     public float ClimbSpeed => _climbSpeed;
     [SerializeField] float _rotationSpeed = 5f;
@@ -31,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform _playerBody;
     public Transform PlayerBody => _playerBody;
     private float _rotationAngle;
+
+    private bool _isRotating;
     // Start is called before the first frame update
     void Start()
     {
@@ -94,9 +98,35 @@ public class PlayerMovement : MonoBehaviour
         if (canMove)
         {
             if (direction.x != 0 || direction.y != 0) value = 1;
-            _rb.velocity = transform.forward * speed * value;// new Vector3( direction.x*speed, 0, direction.y*speed);
+            Vector3 moveVector = transform.forward * speed * value;
+            moveVector.y = _rb.velocity.y;
+            _rb.velocity = moveVector;// new Vector3( direction.x*speed, 0, direction.y*speed);
                                                              // transform.Translate(Vector3.forward * value * Time.deltaTime * speed);
         }
+    }
+    public void SetPosition(Vector3 position)
+    {
+        transform.position = position;
+        //_rb.MovePosition(position);
+    }
+    IEnumerator RotationCor(Vector2 direction)
+    {
+        if(_isRotating) yield break;
+        _isRotating = true;
+        Quaternion targetRot = Quaternion.identity;
+        Quaternion camRot = Quaternion.identity;
+        camRot.eulerAngles = new Vector3(0, _cam.transform.rotation.eulerAngles.y, 0);
+        targetRot.eulerAngles = new Vector3(0, MathF.Atan2(direction.y, -direction.x) * (180 / Mathf.PI) - 90, 0);
+        targetRot *= camRot;
+        while (Quaternion.Dot(_rb.rotation, targetRot) < 0.98)
+        {
+            Debug.Log("Rota");
+
+            
+            _rb.rotation = Quaternion.RotateTowards(_rb.rotation, targetRot, Time.deltaTime * _rotationSpeed);
+            yield return null;
+        }
+        _isRotating = false;
     }
     private bool Rotate(Vector2 direction)
     {
