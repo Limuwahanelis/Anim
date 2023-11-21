@@ -25,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _fastRunSpeed;
     [SerializeField] float _backMoveSpeed;
     [SerializeField] Rigidbody _rb;
+    [SerializeField] PlayerChecks _playerChecks;
+
     public Rigidbody PlayerRB => _rb;
     [SerializeField] Ringhandle _jumphandle;
     [SerializeField] Camera _cam;
@@ -98,12 +100,19 @@ public class PlayerMovement : MonoBehaviour
         if (canMove)
         {
             if (direction.x != 0 || direction.y != 0) value = 1;
-            Vector3 moveVector = transform.forward * speed * value;
-            moveVector.y = _rb.velocity.y;
+            Vector3 moveVector =Vector3.zero; //transform.forward * speed * value;
+            moveVector = Quaternion.AngleAxis(_playerChecks.FloorAngle, transform.right) * transform.forward * speed * value;
+            //Debug.Log(_playerChecks.FloorAngle);
+            //Debug.Log(Quaternion.AngleAxis(_playerChecks.FloorAngle, Vector3.right));
+            //Debug.DrawRay(transform.position + transform.up*1.6f,moveVector);
+            //Debug.Log(transform.forward * speed * value);
+            //Debug.Log(moveVector);
+            //moveVector.y = _rb.velocity.y;
             _rb.velocity = moveVector;// new Vector3( direction.x*speed, 0, direction.y*speed);
                                                              // transform.Translate(Vector3.forward * value * Time.deltaTime * speed);
         }
     }
+
     public void SetPosition(Vector3 position)
     {
         transform.position = position;
