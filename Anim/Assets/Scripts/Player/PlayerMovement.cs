@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _runSpeed;
     [SerializeField] float _walkSpeed;
     [SerializeField] float _fastRunSpeed;
-    [SerializeField] float _backMoveSpeed;
+    [SerializeField] float _pullTowardsFloorSpeed;
     [SerializeField] Rigidbody _rb;
     [SerializeField] PlayerChecks _playerChecks;
 
@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     private float _rotationAngle;
 
     private bool _isRotating;
+    private Vector3 _prevPos;
     // Start is called before the first frame update
     void Start()
     {
@@ -96,21 +97,30 @@ public class PlayerMovement : MonoBehaviour
 
         float value = 0;
 
-
+        Vector3 moveVector=Vector3.zero;
         if (canMove)
         {
             if (direction.x != 0 || direction.y != 0) value = 1;
-            Vector3 moveVector =Vector3.zero; //transform.forward * speed * value;
             moveVector = Quaternion.AngleAxis(_playerChecks.FloorAngle, transform.right) * transform.forward * speed * value;
+            
+
             //Debug.Log(_playerChecks.FloorAngle);
             //Debug.Log(Quaternion.AngleAxis(_playerChecks.FloorAngle, Vector3.right));
             //Debug.DrawRay(transform.position + transform.up*1.6f,moveVector);
             //Debug.Log(transform.forward * speed * value);
             //Debug.Log(moveVector);
             //moveVector.y = _rb.velocity.y;
-            _rb.velocity = moveVector;// new Vector3( direction.x*speed, 0, direction.y*speed);
+
+            
+            Debug.Log(_rb.velocity);
+            Debug.Log(_rb.velocity.magnitude);
+           
                                                              // transform.Translate(Vector3.forward * value * Time.deltaTime * speed);
         }
+        if (_playerChecks.IsNearGround && !_playerChecks.IsTouchingGround) moveVector -= _playerChecks.GetFloorNormal() * _pullTowardsFloorSpeed;
+        Debug.Log("speed " + Vector3.Distance(_prevPos, transform.position) / Time.deltaTime);
+        _rb.velocity = moveVector;
+        _prevPos =transform.position;
     }
 
     public void SetPosition(Vector3 position)

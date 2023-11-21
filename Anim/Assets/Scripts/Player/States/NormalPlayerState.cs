@@ -68,6 +68,11 @@ public class NormalPlayerState : PlayerState
                 return;
             }
         }
+        if(!_context.playerChecks.IsNearGround)
+        {
+            _context.ChangePlayerState?.Invoke(new PlayerFallingState(_context));
+            return;
+        }
          _context.playerMovement.Move(direction, PlayerMovement.MoveState.RUN);
 
         _context.anim.SetFloat("SpeedZ", animSpeedZ);

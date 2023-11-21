@@ -3377,6 +3377,37 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &836668591
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 836668592}
+  m_Layer: 6
+  m_Name: Front Slope Check
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &836668592
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 836668591}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5159078012507228389}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &848913414
 Mesh:
   m_ObjectHideFlags: 0
@@ -4915,7 +4946,7 @@ MonoBehaviour:
   _runSpeed: 4
   _walkSpeed: 2
   _fastRunSpeed: 6
-  _backMoveSpeed: 0.8
+  _pullTowardsFloorSpeed: 0
   _rb: {fileID: 1215438559}
   _playerChecks: {fileID: 1215438555}
   _jumphandle: {fileID: 1382101188}
@@ -4983,7 +5014,7 @@ Rigidbody:
     m_Bits: 64
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
@@ -5167,8 +5198,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3939147b7d12e9448bb9d1fd65365b5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _slopeDetectorTrans: {fileID: 188370545}
-  _slopeDetectionRayLength: 0.52
+  _mainSlopeDetectorTrans: {fileID: 188370545}
+  _frontSlopeDetectorTrans: {fileID: 836668592}
+  _mainSlopeDetectionRayLength: 0.46
+  _frontSlopeDetectionRayLength: 0.2
   _groundMask:
     serializedVersion: 2
     m_Bits: 0
@@ -6654,8 +6687,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3939147b7d12e9448bb9d1fd65365b5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _slopeDetectorTrans: {fileID: 1192300647}
-  _slopeDetectionRayLength: 1.21
+  _mainSlopeDetectorTrans: {fileID: 0}
+  _frontSlopeDetectorTrans: {fileID: 0}
+  _mainSlopeDetectionRayLength: 0
+  _frontSlopeDetectionRayLength: 0
   _groundMask:
     serializedVersion: 2
     m_Bits: 128
@@ -20417,6 +20452,7 @@ Transform:
   - {fileID: 500760698}
   - {fileID: 1385019756}
   - {fileID: 188370545}
+  - {fileID: 836668592}
   m_Father: {fileID: 1215438561}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

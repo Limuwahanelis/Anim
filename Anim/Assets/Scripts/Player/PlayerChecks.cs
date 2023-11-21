@@ -9,6 +9,7 @@ public class PlayerChecks : MonoBehaviour
     [SerializeField] LayerMask _groundMask;
     [SerializeField] SlopeDetection _slopeDetection;
     public bool IsTouchingGround => isTouchingGround;
+    public bool IsNearGround =>_slopeDetection.IsNearGround;
     public float FloorAngle;
     private bool isTouchingGround;
     // Start is called before the first frame update
@@ -22,6 +23,10 @@ public class PlayerChecks : MonoBehaviour
     {
         isTouchingGround=Physics.CheckBox(_groundCheckPos.position, _groundCheckHalfExtents,Quaternion.identity, _groundMask);
         FloorAngle=_slopeDetection.SlopeDetect();
+    }
+    public Vector3 GetFloorNormal()
+    {
+        return _slopeDetection.GetFloorNormal();
     }
     private void OnDrawGizmos()
     {
