@@ -45,6 +45,7 @@ public class SlopeDetection : MonoBehaviour
             //Debug.Log("raw angle: " + angle);
             //Debug.Log(string.Format("{0} % from {1} = {2}",dot>=0?( 1 - dot):(1+dot), angle, (dot >= 0 ? (1 - dot) : (1 + dot)) * angle));   
             angle = (dot >= 0 ? (1 - dot) : (1 + dot)) * angle;
+            
             _isNearGround = true;
             _floorNormal = hit.normal;
             
@@ -59,7 +60,7 @@ public class SlopeDetection : MonoBehaviour
             
             _floorNormal = hitFront.normal;
         }
-        
+        Debug.Log(angle);
         return angle;
     }
     public Vector3 GetFloorNormal()

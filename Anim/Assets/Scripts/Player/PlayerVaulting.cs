@@ -7,6 +7,7 @@ public class PlayerVaulting : MonoBehaviour
 {
     public float VaultSpeed => _vaultSpeed;
     [SerializeField] LayerMask _climbingMask;
+    [SerializeField] PlayerClimbing _climbing;
     [SerializeField] float _headHelperOffsetFromFeet = 1.6f;
     [SerializeField] float _rayTowardsMoveDir = 1;
     [SerializeField] float _rotateSpeed = 2f;
@@ -44,6 +45,7 @@ public class PlayerVaulting : MonoBehaviour
         RaycastHit hit2;
         if (Physics.Raycast(origin, dir, out hit, dis, _climbingMask))// checks if there is obstacle in front
         {
+            if (_climbing.Walls.Contains(hit.collider)) return false; // if collider is also detected in climbing as wall to climb we abort
             origin += moveDir * dis;
             origin += transform.forward * _playerRadius;
             dir = Vector3.up;
@@ -56,7 +58,7 @@ public class PlayerVaulting : MonoBehaviour
                 dir = Vector3.down;
                 Debug.DrawRay(origin, dir * _playerHeight, Color.green);
                 if (Physics.Raycast(origin, dir, out hit2, _playerHeight, _climbingMask))
-                {
+                { 
                     targetPos = hit2.point;
                     return true;
                 }

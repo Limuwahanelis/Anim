@@ -7,6 +7,7 @@ public class CheckForWallContacts : MonoBehaviour
 {
     public Action OnNearWall;
     public Action OnLeftWall;
+    public List<Collider> Walls=>_walls;
 
     private List<Collider> _walls = new List<Collider>();
     // Start is called before the first frame update

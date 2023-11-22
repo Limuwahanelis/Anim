@@ -14,6 +14,7 @@ public class PlayerClimbing : MonoBehaviour
 {
     public Action OnStartClimbing;
     public Action OnFoundFloor;
+    public List<Collider> Walls => _checkForWall.Walls;
 
     [SerializeField] PlayerClimbingAnimatorController _animationController;
     [SerializeField] PlayerMovement _playerMovement;
