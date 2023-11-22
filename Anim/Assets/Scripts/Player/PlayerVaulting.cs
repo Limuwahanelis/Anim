@@ -43,6 +43,7 @@ public class PlayerVaulting : MonoBehaviour
         Debug.DrawRay(origin, dir * dis, Color.red);
         RaycastHit hit;
         RaycastHit hit2;
+        RaycastHit hitt;
         if (Physics.Raycast(origin, dir, out hit, dis, _climbingMask))// checks if there is obstacle in front
         {
             if (_climbing.Walls.Contains(hit.collider)) return false; // if collider is also detected in climbing as wall to climb we abort
@@ -52,18 +53,22 @@ public class PlayerVaulting : MonoBehaviour
             float dis2 = _maxObstacleVaultHeight;
             Debug.DrawRay(origin, dir * dis2, Color.blue);
 
-            if (!Physics.Raycast(origin, dir, out _, dis2, _climbingMask)) // check for space over the obstacle
+            if (!Physics.Raycast(origin, dir, out hitt, dis2, _climbingMask)) // check for space over the obstacle
             {
                 origin += dir * dis2;
                 dir = Vector3.down;
                 Debug.DrawRay(origin, dir * _playerHeight, Color.green);
                 if (Physics.Raycast(origin, dir, out hit2, _playerHeight, _climbingMask))
-                { 
+                {
                     targetPos = hit2.point;
                     return true;
                 }
             }
-            else return false;
+            else
+            {
+                Debug.Log(hitt.collider.gameObject);
+                return false;
+            }
         }
 
         return false;

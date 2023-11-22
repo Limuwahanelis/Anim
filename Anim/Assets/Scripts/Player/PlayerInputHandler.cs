@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public class PlayerInputHandler : MonoBehaviour
 {
     [SerializeField] Player _player;
-    [SerializeField] GameObject tester;
     [SerializeField] PlayerTeleport teleportSkill;
     private bool _isFocused = false;
     Vector2 move;

@@ -34,17 +34,18 @@ public class SlopeDetection : MonoBehaviour
         RaycastHit hit;
         RaycastHit hitFront;
         float angle = 0;
+        float rawAngle = 0;
         if (Physics.Raycast(_mainSlopeDetectorTrans.position, _mainSlopeDetectorTrans.forward, out hit, _mainSlopeDetectionRayLength, _groundMask))
         {
             //Debug.DrawRay(hit.point, hit.normal, Color.green);
-            angle = Vector3.SignedAngle(transform.up, hit.normal, transform.right);
+            rawAngle = Vector3.SignedAngle(transform.up, hit.normal, transform.right);
             Vector3 cross = Vector3.Cross(hit.normal, transform.up).normalized;
             //Debug.DrawRay(transform.position, cross, Color.blue);
             float dot = Vector3.Dot(cross, transform.forward);
             //Debug.Log("dot: "+dot);
             //Debug.Log("raw angle: " + angle);
             //Debug.Log(string.Format("{0} % from {1} = {2}",dot>=0?( 1 - dot):(1+dot), angle, (dot >= 0 ? (1 - dot) : (1 + dot)) * angle));   
-            angle = (dot >= 0 ? (1 - dot) : (1 + dot)) * angle;
+            angle = (dot >= 0 ? (1 - dot) : (1 + dot)) * rawAngle;
             
             _isNearGround = true;
             _floorNormal = hit.normal;
@@ -53,14 +54,15 @@ public class SlopeDetection : MonoBehaviour
         else _isNearGround = false;
         if (Physics.Raycast(_frontSlopeDetectorTrans.position, _frontSlopeDetectorTrans.forward, out hitFront, _frontSlopeDetectionRayLength, _groundMask))
         {
-            angle = Vector3.SignedAngle(transform.up, hitFront.normal, transform.right);
+            rawAngle = Vector3.SignedAngle(transform.up, hitFront.normal, transform.right);
             Vector3 cross = Vector3.Cross(hitFront.normal, transform.up).normalized;
             float dot = Vector3.Dot(cross, transform.forward);
-           angle = (dot >= 0 ? (1 - dot) : (1 + dot)) * angle;
+           angle = (dot >= 0 ? (1 - dot) : (1 + dot)) * rawAngle;
             
             _floorNormal = hitFront.normal;
         }
-        Debug.Log(angle);
+       // Debug.Log(rawAngle);
+        if (rawAngle <= -75f) return 0;
         return angle;
     }
     public Vector3 GetFloorNormal()

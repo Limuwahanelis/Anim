@@ -68,7 +68,7 @@ public class NormalPlayerState : PlayerState
                 return;
             }
         }
-        if(!_context.playerChecks.IsNearGround)
+        if(!_context.playerChecks.IsNearGround && !_context.playerChecks.IsTouchingGround)
         {
             _context.ChangePlayerState?.Invoke(new PlayerFallingState(_context));
             return;
