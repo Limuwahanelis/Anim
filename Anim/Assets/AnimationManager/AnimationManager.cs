@@ -5,6 +5,7 @@ using UnityEditor.Animations;
 #endif
 using UnityEngine;
 using System;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 [RequireComponent(typeof(Animator))]
 public class AnimationManager : MonoBehaviour
@@ -64,29 +65,50 @@ public class AnimationManager : MonoBehaviour
         _currentAnimation = clipToPlayName;
     }
 
-    public float GetAnimationLength(string name)
+    public float GetAnimationLength(string name,int layer=0)
     {
         if (name == "Empty") return 0;
         float clipDuration = 0;
-        clipDuration = animList.animations.Find(x => x.name == name).duration;
+        clipDuration = animList.animations.Find(x => x.name == name && x.layer==layer).duration;
         return clipDuration;
     }
-    public float GetAnimationSpeed(string name)
+    public float GetAnimationLength(string name, string layerName)
+    {
+        if (name == "Empty") return 0;
+        int layer = _anim.GetLayerIndex(layerName);
+        float clipDuration = 0;
+        clipDuration = animList.animations.Find(x => x.name == name && x.layer == layer).duration;
+        return clipDuration;
+    }
+    public float GetAnimationSpeed(string name,int layer=0)
     {
         if (name == "Empty") return 0;
         float clipSpeed = 0;
-        clipSpeed = animList.animations.Find(x => x.name == name).speed;
+        clipSpeed = animList.animations.Find(x => x.name == name && x.layer == layer).speed;
+        return clipSpeed;
+    }
+    public float GetAnimationSpeed(string name, string layerName)
+    {
+        if (name == "Empty") return 0;
+        float clipSpeed = 0;
+        int layer = _anim.GetLayerIndex(layerName);
+        clipSpeed = animList.animations.Find(x => x.name == name && x.layer == layer).speed;
         return clipSpeed;
     }
     private void Update()
     {
 
     }
-    public float GetAnimationCurrentDuration(string stateName)
+    public float GetAnimationCurrentDuration(string stateName,int layer = 0)
     {
-        if (_anim.GetCurrentAnimatorStateInfo(0).IsName(stateName)) return _anim.GetCurrentAnimatorStateInfo(0).normalizedTime * _anim.GetCurrentAnimatorStateInfo(0).length;
+        if (_anim.GetCurrentAnimatorStateInfo(layer).IsName(stateName)) return _anim.GetCurrentAnimatorStateInfo(0).normalizedTime * _anim.GetCurrentAnimatorStateInfo(0).length;
         else return -1;
-
+    }
+    public float GetAnimationCurrentDuration(string stateName, string layerName)
+    {
+        int layer = _anim.GetLayerIndex(layerName);
+        if (_anim.GetCurrentAnimatorStateInfo(layer).IsName(stateName)) return _anim.GetCurrentAnimatorStateInfo(0).normalizedTime * _anim.GetCurrentAnimatorStateInfo(0).length;
+        else return -1;
     }
     public float GetCurrentAnimationRemainingLength()
     {

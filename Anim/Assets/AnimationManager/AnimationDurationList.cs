@@ -23,11 +23,15 @@ public class AnimationDurationList : ScriptableObject
         serializedProperty = serializedObject.FindProperty("animations");
         animations.Clear();
         serializedObject.Update();
-        GetAllStatesFromSubStateMachine(animatorController.layers[0].stateMachine);
+        for(int i=0;i<animatorController.layers.Length;i++)
+        {
+            GetAllStatesFromSubStateMachine(animatorController.layers[i].stateMachine,i);
+        }
+        
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void GetAllStatesFromSubStateMachine(AnimatorStateMachine stateMachine)
+    private void GetAllStatesFromSubStateMachine(AnimatorStateMachine stateMachine,int layer)
     {
         for (int i = 0; i < stateMachine.states.Length; i++)
         {
@@ -35,20 +39,22 @@ public class AnimationDurationList : ScriptableObject
             if (state.motion == null || state.motion.GetType() == typeof(BlendTree))
             {
                 serializedProperty.InsertArrayElementAtIndex(serializedProperty.arraySize);
-                AnimationData tmp2 = new AnimationData(state.name, 0,0);
+                AnimationData tmp2 = new AnimationData(state.name, 0,0,layer);
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1).FindPropertyRelative("name").stringValue = tmp2.name;
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1).FindPropertyRelative("duration").floatValue = tmp2.duration;
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize - 1).FindPropertyRelative("speed").floatValue = tmp2.speed;
+                serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize - 1).FindPropertyRelative("layer").intValue = tmp2.layer;
                 continue;
             }
                 serializedProperty.InsertArrayElementAtIndex(serializedProperty.arraySize );
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1 ).FindPropertyRelative("name").stringValue = state.name;
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize-1 ).FindPropertyRelative("duration").floatValue = state.motion.averageDuration;
                 serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize - 1).FindPropertyRelative("speed").floatValue = state.speed;
+            serializedProperty.GetArrayElementAtIndex(serializedProperty.arraySize - 1).FindPropertyRelative("layer").intValue = layer;
         }
         foreach(ChildAnimatorStateMachine subStateMachine in stateMachine.stateMachines)
         {
-            GetAllStatesFromSubStateMachine(subStateMachine.stateMachine);
+            GetAllStatesFromSubStateMachine(subStateMachine.stateMachine,layer);
         }
     }
 #endif
