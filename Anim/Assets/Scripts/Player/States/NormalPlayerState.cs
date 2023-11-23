@@ -57,7 +57,7 @@ public class NormalPlayerState : PlayerState
                 animSpeedZ = math.clamp(animSpeedZ, 0, 2);
             }
         }
-
+        //animSpeedZ = 2;
         if (direction != Vector2.zero)
         {
             Vector3 targetPos;

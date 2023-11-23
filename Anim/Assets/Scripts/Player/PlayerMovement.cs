@@ -29,6 +29,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Rigidbody _rb;
     [SerializeField] PlayerChecks _playerChecks;
     [SerializeField] StepDetection _stepDetection;
+    [SerializeField] PlayerFootsIK _footIK;
 
     public Rigidbody PlayerRB => _rb;
     [SerializeField] Ringhandle _jumphandle;
@@ -105,8 +106,11 @@ public class PlayerMovement : MonoBehaviour
                 //transform.position = Vector3.Lerp(transform.position, stepPos, speedM * Time.deltaTime);
                 //_rb.MovePosition(Vector3.Lerp(transform.position, stepPos, speedM*Time.deltaTime));
                 _rb.MovePosition(stepPos);
+                
             }
+            
         }
+        _footIK.UpdateIK();
         if (_playerChecks.IsNearGround && !_playerChecks.IsTouchingGround) moveVector -= _playerChecks.GetFloorNormal() * _pullTowardsFloorSpeed;
         _rb.velocity = moveVector;
         _prevPos =transform.position;
