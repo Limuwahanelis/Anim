@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     public Animator anim => _anim;
     public AnimationManager animManager => _animManager;
     [SerializeField] Animator _anim;
+    [SerializeField] PlayerVaulting _vaulting;
     [SerializeField] AnimationManager _animManager;
     [SerializeField] PlayerMovement _playerMovement;
     [SerializeField] PlayerCombat _playerCombat;
@@ -37,7 +38,8 @@ public class Player : MonoBehaviour
             playerCombat = _playerCombat,
             staminaBar = _staminaBar,
             materializeObject = materializeObject,
-            playerClimbing = _playerClimbing
+            playerClimbing = _playerClimbing,
+            playerVaulting = _vaulting
         };
         _currentPlayerState = new NormalPlayerState(_context);
     }

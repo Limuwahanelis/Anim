@@ -32,12 +32,14 @@ public class PlayerFallingState : PlayerState
 
     public override void SetUpState()
     {
-
+        _context.playerMovement.PlayerRB.useGravity = true;
+        _context.anim.SetBool("IsFalling", true);
+        _context.anim.SetBool("IsOnGround", false);
     }
 
     public override void InterruptState()
     {
-        
+        _context.playerMovement.PlayerRB.useGravity = false;
     }
     public override void Move(Vector2 direction)
     {

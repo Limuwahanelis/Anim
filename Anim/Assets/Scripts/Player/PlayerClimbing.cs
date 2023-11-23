@@ -14,6 +14,7 @@ public class PlayerClimbing : MonoBehaviour
 {
     public Action OnStartClimbing;
     public Action OnFoundFloor;
+    public List<Collider> Walls => _checkForWall.Walls;
 
     [SerializeField] PlayerClimbingAnimatorController _animationController;
     [SerializeField] PlayerMovement _playerMovement;
@@ -188,6 +189,7 @@ public class PlayerClimbing : MonoBehaviour
 
         dir = _helper.forward;
         float dis2 = _rayTowardsWall;
+        //raycast forwards towards the wall
         Debug.DrawRay(origin, dir * dis2, Color.blue);
        
         if (Physics.Raycast(origin, dir, out hit, dis, _climbingMask))

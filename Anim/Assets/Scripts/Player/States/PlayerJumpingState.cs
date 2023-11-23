@@ -15,7 +15,7 @@ public class PlayerJumpingState : PlayerState
     {
         if (!_context.playerChecks.IsTouchingGround && _jumped)
         {
-            _context.anim.SetBool("IsFalling", true);
+            
             _context.ChangePlayerState?.Invoke(new PlayerFallingState(_context));
         }
     }

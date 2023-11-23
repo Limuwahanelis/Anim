@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.Rendering.DebugUI;
 
@@ -13,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public Action OnEndedClimb;
+    public Vector3 PlayerPosition=> transform.position;
     [SerializeField] float _climbSpeed=2f;
     public float ClimbSpeed => _climbSpeed;
     [SerializeField] float _rotationSpeed = 5f;
@@ -21,8 +23,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _runSpeed;
     [SerializeField] float _walkSpeed;
     [SerializeField] float _fastRunSpeed;
-    [SerializeField] float _backMoveSpeed;
+    [SerializeField] float _pullTowardsFloorSpeed;
+    [SerializeField] float _stepMoveTime;
+    [SerializeField] float _stepSpeed;
     [SerializeField] Rigidbody _rb;
+    [SerializeField] PlayerChecks _playerChecks;
+    [SerializeField] StepDetection _stepDetection;
+    [SerializeField] PlayerFootsIK _footIK;
+
     public Rigidbody PlayerRB => _rb;
     [SerializeField] Ringhandle _jumphandle;
     [SerializeField] Camera _cam;
@@ -31,6 +39,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform _playerBody;
     public Transform PlayerBody => _playerBody;
     private float _rotationAngle;
+
+    private bool _isRotating;
+    private Vector3 _prevPos;
     // Start is called before the first frame update
     void Start()
     {
@@ -70,16 +81,7 @@ public class PlayerMovement : MonoBehaviour
     public void Move(Vector2 direction, MoveState moveState)
     {
         bool canMove=true;
-        if(direction!=Vector2.zero)
-        {
-            //Quaternion targetRot = Quaternion.identity;
-            //Quaternion camRot = Quaternion.identity;
-            //camRot.eulerAngles = new Vector3(0, _cam.transform.rotation.eulerAngles.y, 0);
-            //targetRot.eulerAngles = new Vector3(0, MathF.Atan2(direction.y, -direction.x) * (180 / Mathf.PI) - 90, 0);
-            //targetRot *= camRot;
-            //_rb.rotation = Quaternion.RotateTowards(_rb.rotation, targetRot, Time.deltaTime * _rotationSpeed);
-            canMove = !Rotate(direction);
-        }
+        if(direction!=Vector2.zero) canMove = !Rotate(direction);
         float speed = 0;
         switch(moveState)
         {
@@ -90,13 +92,52 @@ public class PlayerMovement : MonoBehaviour
 
         float value = 0;
 
-
+        Vector3 moveVector=Vector3.zero;
+        Vector3 stepPos;
         if (canMove)
         {
             if (direction.x != 0 || direction.y != 0) value = 1;
-            _rb.velocity = transform.forward * speed * value;// new Vector3( direction.x*speed, 0, direction.y*speed);
-                                                             // transform.Translate(Vector3.forward * value * Time.deltaTime * speed);
+            moveVector = Quaternion.AngleAxis(_playerChecks.FloorAngle, transform.right) * transform.forward * speed * value;
+            if(_stepDetection.DetectStep(out stepPos))
+            {
+                float speedM = Vector3.Distance(transform.position, stepPos) / _stepMoveTime;
+                Debug.Log(speedM);
+                //transform.position = Vector3.Lerp(transform.position, stepPos, Time.deltaTime * _stepSpeed); // cam't decde which is better
+                //transform.position = Vector3.Lerp(transform.position, stepPos, speedM * Time.deltaTime);
+                //_rb.MovePosition(Vector3.Lerp(transform.position, stepPos, speedM*Time.deltaTime));
+                _rb.MovePosition(stepPos);
+                
+            }
+            
         }
+        _footIK.UpdateIK();
+        if (_playerChecks.IsNearGround && !_playerChecks.IsTouchingGround) moveVector -= _playerChecks.GetFloorNormal() * _pullTowardsFloorSpeed;
+        _rb.velocity = moveVector;
+        _prevPos =transform.position;
+    }
+
+    public void SetPosition(Vector3 position)
+    {
+        transform.position = position;
+    }
+    IEnumerator RotationCor(Vector2 direction)
+    {
+        if(_isRotating) yield break;
+        _isRotating = true;
+        Quaternion targetRot = Quaternion.identity;
+        Quaternion camRot = Quaternion.identity;
+        camRot.eulerAngles = new Vector3(0, _cam.transform.rotation.eulerAngles.y, 0);
+        targetRot.eulerAngles = new Vector3(0, MathF.Atan2(direction.y, -direction.x) * (180 / Mathf.PI) - 90, 0);
+        targetRot *= camRot;
+        while (Quaternion.Dot(_rb.rotation, targetRot) < 0.98)
+        {
+            Debug.Log("Rota");
+
+            
+            _rb.rotation = Quaternion.RotateTowards(_rb.rotation, targetRot, Time.deltaTime * _rotationSpeed);
+            yield return null;
+        }
+        _isRotating = false;
     }
     private bool Rotate(Vector2 direction)
     {

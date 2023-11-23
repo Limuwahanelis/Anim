@@ -8,6 +8,7 @@ public class PlayerContext
     public Animator anim;
     public AnimationManager animationManager;
     public PlayerMovement playerMovement;
+    public PlayerVaulting playerVaulting;
     public Action<PlayerState> ChangePlayerState;
     public PlayerChecks playerChecks;
     public CorutineHolder corutineHolder;

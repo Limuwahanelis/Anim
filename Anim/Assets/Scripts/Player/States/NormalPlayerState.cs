@@ -9,6 +9,7 @@ public class NormalPlayerState : PlayerState
     float _accelerationSpeedZ = 3f;
     float animSpeedZ = 0;
     bool _isMoving;
+    bool _isVaulting;
     Vector2 _movingDirection;
     public NormalPlayerState(PlayerContext context) : base(context)
     {
@@ -30,6 +31,7 @@ public class NormalPlayerState : PlayerState
     }
     public override void Move(Vector2 direction)
     {
+       // if (_isMoving) return;
         _movingDirection = direction;
         if (direction.x == 0 && direction.y == 0)
         {
@@ -55,7 +57,22 @@ public class NormalPlayerState : PlayerState
                 animSpeedZ = math.clamp(animSpeedZ, 0, 2);
             }
         }
-        
+        //animSpeedZ = 2;
+        if (direction != Vector2.zero)
+        {
+            Vector3 targetPos;
+            if ( _context.playerVaulting.CheckVault( out targetPos))
+            {
+                
+                _context.ChangePlayerState?.Invoke(new PlayerVaultingState(_context,targetPos));
+                return;
+            }
+        }
+        if(!_context.playerChecks.IsNearGround && !_context.playerChecks.IsTouchingGround)
+        {
+            _context.ChangePlayerState?.Invoke(new PlayerFallingState(_context));
+            return;
+        }
          _context.playerMovement.Move(direction, PlayerMovement.MoveState.RUN);
 
         _context.anim.SetFloat("SpeedZ", animSpeedZ);

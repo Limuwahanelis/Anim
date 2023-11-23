@@ -62,6 +62,21 @@ public class PlayerWalkingState : PlayerState
                 }
             }
         }
+        if (direction != Vector2.zero)
+        {
+            Vector3 targetPos;
+            if (_context.playerVaulting.CheckVault(out targetPos))
+            {
+
+                _context.ChangePlayerState?.Invoke(new PlayerVaultingState(_context, targetPos));
+                return;
+            }
+        }
+        if (!_context.playerChecks.IsNearGround && !_context.playerChecks.IsTouchingGround)
+        {
+            _context.ChangePlayerState?.Invoke(new PlayerFallingState(_context));
+            return;
+        }
 
         _context.playerMovement.Move(direction, PlayerMovement.MoveState.WALK);
 
