@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NormalPlayerState : PlayerState
@@ -11,22 +12,27 @@ public class NormalPlayerState : PlayerState
     bool _isMoving;
     bool _isVaulting;
     Vector2 _movingDirection;
-    public NormalPlayerState(PlayerContext context) : base(context)
+    public NormalPlayerState() : base() 
     {
-        animSpeedZ = _context.anim.GetFloat("SpeedZ");
-       // _context.playerClimbing.OnStartClimbing += ChangeToClimbingState;
-    }
 
+    }
+    
     public override void Update()
     {
         if( _context.playerClimbing.MoveHandTowardsWall(_movingDirection)>=1)
         {
-            _context.ChangePlayerState(new PlayerJumpingOnWallToClimb(_context));
+            PlayerJumpingOnWallToClimb.SetAsCurrentState(_context.getState(typeof(PlayerJumpingOnWallToClimb)), _context);
         }
     }
 
-    public override void SetUpState()
+    public override void SetUpState(PlayerContext context)
     {
+        base.SetUpState(context);
+        _stoppingSpeedZ = 3f;
+        _accelerationSpeedZ = 3f;
+        _isMoving= false;
+        _isVaulting= false;
+        animSpeedZ = _context.anim.GetFloat("SpeedZ");
         _context.staminaBar.StartRegeneratingStamina();
     }
     public override void Move(Vector2 direction)
@@ -63,14 +69,13 @@ public class NormalPlayerState : PlayerState
             Vector3 targetPos;
             if ( _context.playerVaulting.CheckVault( out targetPos))
             {
-                
-                _context.ChangePlayerState?.Invoke(new PlayerVaultingState(_context,targetPos));
+                PlayerVaultingState.SetAsCurrentState(_context.getState(typeof(PlayerVaultingState)), _context, targetPos);
                 return;
             }
         }
         if(!_context.playerChecks.IsNearGround && !_context.playerChecks.IsTouchingGround)
         {
-            _context.ChangePlayerState?.Invoke(new PlayerFallingState(_context));
+            PlayerFallingState.SetAsCurrentState(_context.getState(typeof(PlayerFallingState)), _context);
             return;
         }
          _context.playerMovement.Move(direction, PlayerMovement.MoveState.RUN);
@@ -79,7 +84,7 @@ public class NormalPlayerState : PlayerState
     }
     public override void Jump()
     {
-        _context.ChangePlayerState?.Invoke(new PlayerJumpingState(_context,_isMoving));
+        PlayerJumpingState.SetAsCurrentState(_context.getState(typeof(PlayerJumpingState)), _context, _isMoving);
     }
 
     public override void InterruptState()
@@ -87,8 +92,15 @@ public class NormalPlayerState : PlayerState
     }
     public override void Attack()
     {
-        _context.ChangePlayerState(new PlayerAttackingState(_context));
+        PlayerAttackingState.SetAsCurrentState(_context.getState(typeof(PlayerAttackingState)), _context);
+
     }
-    public override void ChangeMove()=>_context.ChangePlayerState(new PlayerWalkingState(_context));
-    public override void Dash()=> _context.ChangePlayerState(new PlayerFastRunState(_context));
+    public override void ChangeMove() => PlayerWalkingState.SetAsCurrentState(_context.getState(typeof(PlayerWalkingState)), _context);
+    public override void Dash() => PlayerFastRunState.SetAsCurrentState(_context.getState(typeof(PlayerFastRunState)), _context);
+
+    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    {
+        (state as NormalPlayerState).SetUpState(context);
+        state.ChangeCurrentState();
+    }
 }

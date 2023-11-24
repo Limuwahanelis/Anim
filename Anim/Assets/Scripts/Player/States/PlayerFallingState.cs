@@ -6,10 +6,11 @@ public class PlayerFallingState : PlayerState
 {
     float _landingTime = 0f;
     bool _touchedGround = false;
-    public PlayerFallingState(PlayerContext context) : base(context)
+    public PlayerFallingState() : base()
     {
 
     }
+
 
     public override void Update()
     {
@@ -25,13 +26,16 @@ public class PlayerFallingState : PlayerState
         }
         if(_landingTime>=0.1f)
         {
-            _context.ChangePlayerState(new NormalPlayerState(_context));
+            NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
         }
         
     }
 
-    public override void SetUpState()
+    public override void SetUpState(PlayerContext context)
     {
+        base.SetUpState(context);
+         _landingTime = 0f;
+         _touchedGround = false;
         _context.playerMovement.PlayerRB.useGravity = true;
         _context.anim.SetBool("IsFalling", true);
         _context.anim.SetBool("IsOnGround", false);
@@ -48,7 +52,12 @@ public class PlayerFallingState : PlayerState
             _context.anim.SetBool("IsFalling", false);
             _context.anim.SetBool("Start_Climb", true);
             _context.playerClimbing.StartClimbingFromAir();
-            _context.ChangePlayerState(new PlayerClimbingState(_context));
+            PlayerClimbingState.SetAsCurrentState(_context.getState(typeof(PlayerClimbingState)), _context);
         }
+    }
+    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    {
+        (state as PlayerFallingState).SetUpState(context);
+        state.ChangeCurrentState();
     }
 }

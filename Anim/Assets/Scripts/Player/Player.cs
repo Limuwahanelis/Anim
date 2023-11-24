@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.Rendering.VirtualTexturing;
 
 public class Player : MonoBehaviour
 {
@@ -23,9 +26,14 @@ public class Player : MonoBehaviour
     [SerializeField] PlayerClimbing _playerClimbing;
     private PlayerState _currentPlayerState;
     private PlayerContext _context;
+    private Dictionary<Type, PlayerState> playerStates = new Dictionary<Type, PlayerState>();
     // Start is called before the first frame update
     void Start()
     {
+        List<Type> states = AppDomain.CurrentDomain.GetAssemblies().SelectMany(domainAssembly => domainAssembly.GetTypes())
+            .Where(type => typeof(PlayerState).IsAssignableFrom(type) && !type.IsAbstract).ToArray().ToList();
+        
+
         // aa = ChangeState;
         _context = new PlayerContext
         {
@@ -39,11 +47,23 @@ public class Player : MonoBehaviour
             staminaBar = _staminaBar,
             materializeObject = materializeObject,
             playerClimbing = _playerClimbing,
-            playerVaulting = _vaulting
+            playerVaulting = _vaulting,
+            getState = GetState,
         };
-        _currentPlayerState = new NormalPlayerState(_context);
+
+        foreach (Type state in states)
+        {
+            playerStates.Add(state, (PlayerState)Activator.CreateInstance(state));
+            //playerStates[state].SetUpState(_context);
+        }
+        _currentPlayerState = GetState(typeof(NormalPlayerState));
+        _currentPlayerState.SetUpState(_context);
     }
 
+    public PlayerState GetState(Type state)
+    {
+        return playerStates[state];
+    }
     // Update is called once per frame
     void Update()
     {
@@ -57,7 +77,6 @@ public class Player : MonoBehaviour
     {
         if(_printState) Debug.Log(newState.GetType());
         _currentPlayerState.InterruptState();
-        newState.SetUpState();
         _currentPlayerState = newState;
     }
 }

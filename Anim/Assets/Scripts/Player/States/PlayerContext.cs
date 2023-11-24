@@ -10,6 +10,8 @@ public class PlayerContext
     public PlayerMovement playerMovement;
     public PlayerVaulting playerVaulting;
     public Action<PlayerState> ChangePlayerState;
+    public delegate PlayerState GetState(Type state);
+    public GetState getState;
     public PlayerChecks playerChecks;
     public CorutineHolder corutineHolder;
     public PlayerCombat playerCombat;

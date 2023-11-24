@@ -12,10 +12,10 @@ public class PlayerClimbingState : PlayerState
     float _accelerationSpeedZ = 3f;
     float _stoppingSpeedX = 8f;
     float _accelerationSpeedX = 3f;
-    float _horizontalClimb = 0f;
     float _horizontalClimbAcceleration = 1.5f;
-    float _verticalClimb = 0f;
     float _verticalClimbAcceleration = 1.5f;
+    float _horizontalClimb = 0f;
+    float _verticalClimb = 0f;
     float _diagonalClimbL = 0f;
     float _diagonalClimbR = 0f;
     int _cycleX = 1;
@@ -28,12 +28,10 @@ public class PlayerClimbingState : PlayerState
     Vector2 _normalClimb = Vector2.zero;
     Vector2 _diagonalDirection = Vector2.zero;
     Vector2 _moveVector = Vector2.zero;
-
-    public PlayerClimbingState(PlayerContext context) : base(context)
+    public PlayerClimbingState() : base()
     {
 
     }
-
     public override void Update()
     {
         
@@ -43,9 +41,24 @@ public class PlayerClimbingState : PlayerState
     {
         _context.playerClimbing.SetUpLimbs();
     }
-    public override void SetUpState()
+    public override void SetUpState(PlayerContext context)
     {
-        
+
+        base.SetUpState(context);
+         _horizontalClimb = 0f;
+         _verticalClimb = 0f;
+         _diagonalClimbL = 0f;
+         _diagonalClimbR = 0f;
+         _cycleX = 1;
+         _cycleY = 1;
+         _cycleDL = 1;
+         _cycleDR = 1;
+         _lastCycle = 1;
+         _isBothPressed = true;
+         _lastDirection = Vector2.zero;
+         _normalClimb = Vector2.zero;
+         _diagonalDirection = Vector2.zero;
+         _moveVector = Vector2.zero;
     }
 
     public override void InterruptState()
@@ -185,7 +198,7 @@ public class PlayerClimbingState : PlayerState
     public override void Drop()
     {
         _context.playerClimbing.StopClimbing();
-        _context.ChangePlayerState(new PlayerStopClimbingState(_context));
+        PlayerStopClimbingState.SetAsCurrentState(_context.getState(typeof(PlayerStopClimbingState)), _context);
     }
     private void ChangeAnimationAccordingToLastDirection()
     {
@@ -308,4 +321,10 @@ public class PlayerClimbingState : PlayerState
     //    Debug.Log("end");
     //    _isMoving =false;
     //}
+    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    {
+        (state as PlayerClimbingState).SetUpState(context);
+        state.ChangeCurrentState();
+    }
+
 }
