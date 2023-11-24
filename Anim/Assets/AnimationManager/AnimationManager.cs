@@ -53,6 +53,26 @@ public class AnimationManager : MonoBehaviour
             _currentAnimation = name;
         }
     }
+    public void PlayAnimation(string name, string layerName, bool canBePlayedOver = true)
+    {
+        int layer = _anim.GetLayerIndex(layerName);
+        if (_currentAnimation == name) return;
+        if (!canBePlayedOver)
+        {
+            _overPlayAnimationEnded = false;
+            _animLength = GetAnimationLength(name,layer);
+            _currentTimer = StartCoroutine(TimerCor(_animLength, SetOverPlayAnimAsEnded));
+            _anim.Play(Animator.StringToHash(name)); //clipToPlay.nameHash);
+            _currentAnimation = name;
+        }
+        if (_overPlayAnimationEnded)
+        {
+            _animLength = GetAnimationLength(name,layer);
+            StartCoroutine(TimerCor(_animLength, SetNormalAnimAsEneded));
+            _anim.Play(Animator.StringToHash(name)); //clipToPlay.nameHash);
+            _currentAnimation = name;
+        }
+    }
 
     public void OverPlayAnimation(string name) 
     {
@@ -107,7 +127,7 @@ public class AnimationManager : MonoBehaviour
     public float GetAnimationCurrentDuration(string stateName, string layerName)
     {
         int layer = _anim.GetLayerIndex(layerName);
-        if (_anim.GetCurrentAnimatorStateInfo(layer).IsName(stateName)) return _anim.GetCurrentAnimatorStateInfo(0).normalizedTime * _anim.GetCurrentAnimatorStateInfo(0).length;
+        if (_anim.GetCurrentAnimatorStateInfo(layer).IsName(stateName)) return _anim.GetCurrentAnimatorStateInfo(layer).normalizedTime * _anim.GetCurrentAnimatorStateInfo(layer).length;
         else return -1;
     }
     public float GetCurrentAnimationRemainingLength()

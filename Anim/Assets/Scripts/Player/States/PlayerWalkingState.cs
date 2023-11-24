@@ -9,18 +9,21 @@ public class PlayerWalkingState : PlayerState
     float _accelerationSpeedZ = 2.5f;
     float animSpeedZ = 0;
     bool _isMoving;
-    public PlayerWalkingState(PlayerContext context) : base(context)
+    public PlayerWalkingState() : base()
     {
-        animSpeedZ = _context.anim.GetFloat("SpeedZ");
-    }
 
+    }
     public override void Update()
     {
 
     }
 
-    public override void SetUpState()
+    public override void SetUpState(PlayerContext context)
     {
+        _context = context;
+         animSpeedZ = 0;
+         _isMoving=false;
+        animSpeedZ = _context.anim.GetFloat("SpeedZ");
         _context.staminaBar.StartRegeneratingStamina();
     }
     public override void Move(Vector2 direction)
@@ -67,14 +70,13 @@ public class PlayerWalkingState : PlayerState
             Vector3 targetPos;
             if (_context.playerVaulting.CheckVault(out targetPos))
             {
-
-                _context.ChangePlayerState?.Invoke(new PlayerVaultingState(_context, targetPos));
+                PlayerVaultingState.SetAsCurrentState(_context.getState(typeof(PlayerVaultingState)), _context, targetPos);
                 return;
             }
         }
         if (!_context.playerChecks.IsNearGround && !_context.playerChecks.IsTouchingGround)
         {
-            _context.ChangePlayerState?.Invoke(new PlayerFallingState(_context));
+            PlayerFallingState.SetAsCurrentState(_context.getState(typeof(PlayerFallingState)), _context);
             return;
         }
 
@@ -93,12 +95,18 @@ public class PlayerWalkingState : PlayerState
     }
     public override void Attack()
     {
-        _context.ChangePlayerState(new PlayerCombatState(_context));
+        PlayerAttackingState.SetAsCurrentState(_context.getState(typeof(PlayerAttackingState)), _context);
     }
 
     public override void ChangeMove()
     {
         _context.anim.SetTrigger("Walk_Run");
-        _context.ChangePlayerState(new NormalPlayerState(_context));
+        NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+    }
+
+    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    {
+        (state as PlayerWalkingState).SetUpState(context);
+        state.ChangeCurrentState();
     }
 }

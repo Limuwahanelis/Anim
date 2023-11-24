@@ -7,11 +7,10 @@ public class PlayerJumpingOnWallToClimb : PlayerState
     float _timeToWait = 0.2f;
     float _time = 0f;
     bool _fired;
-    public PlayerJumpingOnWallToClimb(PlayerContext context) : base(context)
+    public PlayerJumpingOnWallToClimb() : base()
     {
-        _context.playerClimbing.OnStartClimbing += MoveToClimbingState;
-    }
 
+    }
     public override void Update()
     {
         if(_time < _timeToWait)
@@ -25,18 +24,26 @@ public class PlayerJumpingOnWallToClimb : PlayerState
         }
     }
 
-    public override void SetUpState()
+    public override void SetUpState(PlayerContext context)
     {
-        
+        base.SetUpState(context);
+         _time = 0f;
+         _fired=false;
+        _context.playerClimbing.OnStartClimbing += MoveToClimbingState;
         _context.anim.SetTrigger("Start_Climb");
         _context.anim.SetBool("IsOnGround", false);
     }
     private void MoveToClimbingState()
     {
-        _context.ChangePlayerState(new PlayerClimbingState(_context));
+        PlayerClimbingState.SetAsCurrentState(_context.getState(typeof(PlayerClimbingState)), _context);
     }
     public override void InterruptState()
     {
         _context.playerClimbing.OnStartClimbing -= MoveToClimbingState;
+    }
+    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    {
+        (state as PlayerJumpingOnWallToClimb).SetUpState(context);
+        state.ChangeCurrentState();
     }
 }
