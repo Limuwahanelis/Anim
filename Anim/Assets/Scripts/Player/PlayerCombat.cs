@@ -66,12 +66,15 @@ public class PlayerCombat : MonoBehaviour
         }
         if(_player.animManager.GetAnimationCurrentDuration("Attack "+_comboAttackCounter,"Combat") >= _comboList1.comboList[_comboAttackCounter-1].nextAttackWindowStart / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter,"Combat") && _player.animManager.GetAnimationCurrentDuration("Attack " + _comboAttackCounter,"Combat")  <= _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd / _player.animManager.GetAnimationSpeed("Attack " + _comboAttackCounter,"Combat"))
         {
-            attackState.ResetTimer();
             //_player.animManager.PlayAnimation("Attack " + _comboAttackCounter);
             _player.anim.SetTrigger("Attack");
             _comboAttackCounter++;
-            attackState.StartWaitingForAttackEnd("Attack " + _comboAttackCounter);
+            attackState.StartWaitingFoNextAttack("Attack " + _comboAttackCounter);
         }
+    }
+    public float GetCurrentAttackWindowEndRaw()
+    {
+        return _comboList1.comboList[_comboAttackCounter - 1].nextAttackWindowEnd;
     }
     public void ResetWeaponDamageables()
     {

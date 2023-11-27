@@ -9,8 +9,11 @@ public class PlayerAttackingState : PlayerState
     // TODO: make sciptable object for attacks
     float _attackSpeed;
     float _attackLength;
+    float _nextAttackLength = -1;
+    float _nextAttackSpeed = -1;
+    float _attackWindowEnd;
     float _timer;
-    bool _isWaitingForAttackEnd;
+    bool _isWaitingForNextAttack;
     int _combatAnimLayer;
     float _transitionTime=0.2f;
     bool _isTransitioning=false;
@@ -38,22 +41,30 @@ public class PlayerAttackingState : PlayerState
         _context.animationManager.PlayAnimation("Attack 1","Combat");
         _attackLength = _context.animationManager.GetAnimationLength("Attack 1","Combat");
         _attackSpeed = _context.animationManager.GetAnimationSpeed("Attack 1","Combat");
+        _attackWindowEnd = _context.playerCombat.GetCurrentAttackWindowEndRaw();
         _isTransitioning = false;
         _timer = 0;
-        StartWaitingForAttackEnd("Attack 1");
+         _nextAttackLength = -1;
+         _nextAttackSpeed = -1;
+        //StartWaitingFoNextAttack("Attack 1");
     }
     public override void Update()
     {
-        if (_isWaitingForAttackEnd)
+        if(_isWaitingForNextAttack)
         {
-            if (_timer >= _attackLength / _attackSpeed)
+            if(_timer> _attackWindowEnd/_attackSpeed)
             {
-                //_transitionCor=_context.corutineHolder.StartCoroutine(transitionCor());
-                _context.anim.SetLayerWeight(_combatAnimLayer, 0);
-                NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+                _attackLength = _nextAttackLength;
+                _attackSpeed = _nextAttackSpeed;
+                _timer = 0;
+                _isWaitingForNextAttack = false;
             }
-            _timer += Time.deltaTime;
         }
+        else
+        {
+            if (_timer >= _attackLength / _attackSpeed)  NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+        }
+        _timer += Time.deltaTime;
 
     }
 
@@ -96,17 +107,12 @@ public class PlayerAttackingState : PlayerState
     {
         _context.playerCombat.PerformNextAttackInCombo(this);
     }
-    public void StartWaitingForAttackEnd(string attackname)
+    public void StartWaitingFoNextAttack(string attackname)
     {
-        if (_isWaitingForAttackEnd) return;
-        _attackLength = _context.animationManager.GetAnimationLength(attackname,"Combat");
-        _attackSpeed = _context.animationManager.GetAnimationSpeed(attackname, "Combat");
-        _isWaitingForAttackEnd = true;
-    }
-    public void ResetTimer()
-    {
-        _isWaitingForAttackEnd = false;
-        _timer = 0;
+        if (_isWaitingForNextAttack) return;
+        _nextAttackLength = _context.animationManager.GetAnimationLength(attackname,"Combat");
+        _nextAttackSpeed = _context.animationManager.GetAnimationSpeed(attackname, "Combat");
+        _isWaitingForNextAttack = true;
     }
     public override void Dash()
     {
