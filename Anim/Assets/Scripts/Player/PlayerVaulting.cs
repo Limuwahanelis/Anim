@@ -103,7 +103,7 @@ public class PlayerVaulting : MonoBehaviour
                 Gizmos.DrawLine(origin, origin+ dir * _playerHeight);
                 if (Physics.Raycast(origin, dir, out hit2, _playerHeight, _climbingMask))
                 {
-                    Debug.Log("Vault");
+                    //Debug.Log("Vault");
                     targetPos = hit2.point;
                 }
             }

@@ -33,7 +33,6 @@ public class PlayerInputHandler : MonoBehaviour
     }
     void OnFocus(InputValue inputValue)
     {
-        Debug.Log(inputValue.Get<float>());
         _isFocused = inputValue.Get<float>()>0?true:false;
         teleportSkill.enabled = _isFocused;
     }
