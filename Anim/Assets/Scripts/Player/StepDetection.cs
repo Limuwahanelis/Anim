@@ -7,6 +7,7 @@ public class StepDetection : MonoBehaviour
     [SerializeField] Transform _stepDetectorTrans;
     [SerializeField] float _stepDetectionRayLength;
     [SerializeField] LayerMask _groundMask;
+    [SerializeField] PlayerClimbing _climbing;
     [SerializeField] float _feetOffset;
     [SerializeField] float _playerRadius;
     [SerializeField] float _playerHeight;
@@ -31,6 +32,7 @@ public class StepDetection : MonoBehaviour
             float angle = Vector3.SignedAngle(transform.up, hitFront.normal, transform.right);
             if (angle >= -90f && angle < -85f)
             {
+                if (_climbing.Walls.Contains(hitFront.collider)) return false;
                 Vector3 moveDir = transform.forward;
                 targetPos = Vector3.zero;
                 Vector3 origin = transform.position;

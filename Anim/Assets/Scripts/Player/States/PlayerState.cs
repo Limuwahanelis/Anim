@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
@@ -6,7 +7,12 @@ using UnityEngine;
 public abstract class PlayerState
 {
     protected PlayerContext _context;
-    public PlayerState() { }
+    public delegate PlayerState GetState(Type state);
+    protected static GetState _getType;
+    public PlayerState(GetState function) 
+    {
+        _getType = function;
+    }
     public PlayerState(PlayerContext context)
     {
         _context = context;

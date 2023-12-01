@@ -48,12 +48,11 @@ public class Player : MonoBehaviour
             materializeObject = materializeObject,
             playerClimbing = _playerClimbing,
             playerVaulting = _vaulting,
-            getState = GetState,
         };
-
+        PlayerState.GetState getState = GetState;
         foreach (Type state in states)
         {
-            playerStates.Add(state, (PlayerState)Activator.CreateInstance(state));
+            playerStates.Add(state, (PlayerState)Activator.CreateInstance(state, getState));
             //playerStates[state].SetUpState(_context);
         }
         _currentPlayerState = GetState(typeof(NormalPlayerState));
