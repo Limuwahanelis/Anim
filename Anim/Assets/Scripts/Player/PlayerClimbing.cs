@@ -12,25 +12,26 @@ using UnityEngine.UIElements;
 public class PlayerClimbing : MonoBehaviour
 {
     public Action OnStartClimbing;
-    public Action OnFoundFloor;
+    public Action<Vector3> OnFoundFloor;
     public List<Collider> Walls => _checkForWall.Walls;
+
+    [Header("Objects")]
 
     [SerializeField] PlayerClimbingAnimatorController _animationController;
     [SerializeField] PlayerMovement _playerMovement;
+    [SerializeField] PlayerVaulting _playerVaulting;
     [SerializeField] CheckForWallContacts _checkForWall;
     [SerializeField] Camera _playerCamera;
     [SerializeField] PlayerChecks _playerChecks;
-    [SerializeField] AnimationCurve dd;
-
-    [SerializeField] Transform _player;
-    [SerializeField] float _startClimbingSpeed;
-    [SerializeField] float _checkLength;
-    [SerializeField,Range(0,1)] float _wallCheckAcceptance;
-    [SerializeField] float _climbSpeed;
-    [SerializeField] Transform _bodyCheck;
     [SerializeField] LayerMask _climbingMask;
-    [SerializeField] Transform _startClimbingTran;
     [SerializeField] Rig _playerRig;
+
+    [Header("Transforms")]
+    [SerializeField] Transform _player;
+    [SerializeField] Transform _spineTarget;
+    [SerializeField] Transform _bodyCheck;
+    [SerializeField] Transform _startClimbingTran;
+    [SerializeField] Transform _targetRHWallTouch;
 
     [SerializeField] Transform _targetRightHand;
     [SerializeField] Transform _targetLeftHand;
@@ -47,36 +48,43 @@ public class PlayerClimbing : MonoBehaviour
     [SerializeField] Transform _RLForwardTrans;
     [SerializeField] Transform _LLForwardTrans;
 
+    [Header("Constraints")]
 
     [SerializeField] TwoBoneIKConstraint _RHIK;
     [SerializeField] TwoBoneIKConstraint _LHIK;
     [SerializeField] TwoBoneIKConstraint _RLIK;
     [SerializeField] TwoBoneIKConstraint _LLIK;
-
     [SerializeField] TwoBoneIKConstraint _RHIKWallTouch;
-    [SerializeField] Transform _targetRHWallTouch;
 
+    [Header("Variables")]
+
+    [SerializeField] float _startClimbingSpeed;
+    [SerializeField] float _checkLength;
+    [SerializeField,Range(0,1)] float _wallCheckAcceptance;
+    [SerializeField] float _climbSpeed;
     [SerializeField] float _checkDistance;
+    [SerializeField] float[] _limbsOffsets = new float[4];
 
     private Transform[] _limbsTransform;
     private Transform[] _targets;
     private Transform[] _limbsForwardTran;
     private Vector3[] _allHitNormals;
-    [SerializeField] float[] _limbsOffsets = new float[4];
-
+    
     private float _touchWall;
-
     private bool[] _allGroundSphereCastHits;
     private RaycastHit hit;
     private float addedHeight = 0.3f;
-
     private bool _moveHandTowardsWall;
-
-
     Coroutine _climbingCor;
-    private Vector3 _climbDirection;
 
     //////////////////////////////////////
+    [SerializeField] float _rayTowardsWall = 1f;
+    [SerializeField] float _headHelperOffsetFromFeet = 1.6f;
+    [SerializeField] float _spineHelperOffsetFromFeet = 1f;
+    [SerializeField] float _rayTowardsMoveDir = 1;
+    [SerializeField] float _rotateSpeed = 2f;
+    [SerializeField] float _positionOffset;
+    [SerializeField] float _offsetFromWall;
     Quaternion _previousRotation;
     Transform _headHelper;
     Transform _helper;
@@ -85,17 +93,8 @@ public class PlayerClimbing : MonoBehaviour
     Vector3 _startPos;
     bool _isLerping;
     float t;
-    bool _corner;
     Vector2 _lastClimbingDirection = Vector2.zero;
-    [SerializeField] float _rayTowardsWall = 1f;
-    [SerializeField] float _headHelperOffsetFromFeet=1.6f;
-    [SerializeField] float _spineHelperOffsetFromFeet = 1f;
-    [SerializeField] Transform _spineTarget;
-    [SerializeField] float _rayTowardsMoveDir = 1;
-    [SerializeField] float _rotateSpeed = 2f;
-    [SerializeField] float _positionOffset;
-    [SerializeField] float _offsetFromWall;
-    [SerializeField] bool _fsaf;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -129,7 +128,11 @@ public class PlayerClimbing : MonoBehaviour
         if (_helper != null)
         {
             _helper.position = transform.position;
+            _helper.rotation = transform.rotation;
+            _headHelper.rotation = _helper.rotation;
+            _spineHelper.rotation = _helper.rotation;
             _spineHelper.position = _headHelper.position;
+            _headHelper.position = _helper.position+ _helper.up * _headHelperOffsetFromFeet;
             return;
         }
         _helper = new GameObject().transform;
@@ -139,12 +142,11 @@ public class PlayerClimbing : MonoBehaviour
         _spineHelper.name = "climb_spine_helper";
         _headHelper.name = "climb_head_helper";
         _helper.position = transform.position;
-        //CheckForClimb();
+        _headHelper.position = _helper.position + _helper.up * _headHelperOffsetFromFeet;
     }
 
     public void Climb(Vector2 direction)
     {
-        //_animationController.aa(_lastClimbingDirection,direction, t);
         if (Vector2.Dot(direction, _lastClimbingDirection) == -1)
         {
             Vector3 tmp = _startPos;
@@ -168,6 +170,8 @@ public class PlayerClimbing : MonoBehaviour
             if (direction == Vector2.zero) return;
             bool canMove = CanMove(moveDir);
             if (!canMove)  return;
+            _headHelper.position = _helper.position + _helper.up * _headHelperOffsetFromFeet;
+            _headHelper.rotation = _helper.rotation;
             _spineHelper.position = _helper.position + _helper.up * _spineHelperOffsetFromFeet;
             _spineHelper.rotation = _helper.rotation;
             RaycastHit hit;
@@ -190,20 +194,16 @@ public class PlayerClimbing : MonoBehaviour
                 t = 1;
                 _isLerping = false;
             }
-            //_animationController.aa(_lastClimbingDirection, direction, t);
             Vector3 cp = Vector3.Lerp(_startPos, _targetPos, t);
-            RaycastHit hit;
 
             Debug.DrawRay(_player.position - _player.forward, _player.forward * 3f);
             _playerMovement.PlayerRB.MovePosition(cp);
             _playerMovement.PlayerRB.rotation = Quaternion.Slerp(_playerMovement.PlayerRB.rotation, _helper.rotation, Time.deltaTime * _rotateSpeed);
             _spineTarget.rotation = Quaternion.Slerp(_spineTarget.rotation, _spineHelper.rotation, Time.deltaTime);
-            //_lastClimbingDirection = Vector2.zero;
         }
     }
     bool CanMove(Vector3 moveDir)
     {
-       // Debug.Log(moveDir);
         Vector3 origin = transform.position;
 
         float dis = _rayTowardsMoveDir;
@@ -220,10 +220,44 @@ public class PlayerClimbing : MonoBehaviour
             //}
             _helper.position = PosWithOffset(origin, hit.point);
             _helper.rotation = Quaternion.LookRotation(-hit.normal);
-            _climbDirection = moveDir;
             return true;
         }
 
+
+
+
+
+        Debug.DrawRay(_headHelper.position, _headHelper.forward*0.5f, Color.blue);
+        RaycastHit headHelperHit;
+        if(Physics.Raycast(_headHelper.position,_headHelper.forward,out headHelperHit,0.5f,_climbingMask))
+        {
+            float angle = Vector3.SignedAngle(headHelperHit.normal, Vector3.up, Vector3.Cross(headHelperHit.normal, Vector3.up));
+            Debug.Log(angle);
+            if (angle < 46f)
+            {
+
+                Debug.Log("should vault");
+                StopClimbing();
+                OnFoundFloor?.Invoke(headHelperHit.point);
+                return false;
+            }
+        }
+
+        Vector3 headHelperOrigin = _headHelper.position + _headHelper.forward * 0.5f;
+        Debug.DrawRay(headHelperOrigin, Vector3.down * 1f, Color.cyan);
+        if (Physics.Raycast(headHelperOrigin, Vector3.down, out headHelperHit, 1f, _climbingMask))
+        {
+            float angle = Vector3.SignedAngle(headHelperHit.normal, Vector3.up, Vector3.Cross(headHelperHit.normal, Vector3.up));
+            Debug.Log(angle);
+            if (angle < 46f)
+            {
+                Debug.Log("should vault cor");
+                StopClimbing();
+                OnFoundFloor?.Invoke(headHelperHit.point);
+                return false;
+            }
+
+        }
 
         origin += moveDir * dis;
 
@@ -231,12 +265,11 @@ public class PlayerClimbing : MonoBehaviour
         float dis2 = _rayTowardsWall;
         //raycast forwards towards the wall
         Debug.DrawRay(origin, dir * dis2, Color.blue);
-       
         if (Physics.Raycast(origin, dir, out hit, dis2, _climbingMask))
         {
+            //Debug.Log(Vector3.SignedAngle(hit.normal, Vector3.up,Vector3.Cross(hit.normal,Vector3.up)));
             _helper.position = PosWithOffset(origin, hit.point);
             _helper.rotation = Quaternion.LookRotation(-hit.normal);
-            _climbDirection = moveDir;
             return true;
         }
 
@@ -251,14 +284,12 @@ public class PlayerClimbing : MonoBehaviour
             Debug.Log("coee");
             _helper.position = PosWithOffset(origin, hit.point);
             _helper.rotation = Quaternion.LookRotation(-hit.normal);
-            _climbDirection=moveDir;
             return true;
         }
 
-        Vector3 headHelperOrigin = origin;
 
-        headHelperOrigin.y += _headHelperOffsetFromFeet;
-        Debug.DrawRay(headHelperOrigin, dir * dis2, Color.magenta);
+
+
         origin += dir * dis2;
         dir = -Vector3.up;
 
@@ -278,7 +309,6 @@ public class PlayerClimbing : MonoBehaviour
             {
                 _helper.position = PosWithOffset(origin, hit.point);
                 _helper.rotation = Quaternion.LookRotation(-hit.normal);
-                _climbDirection = moveDir;
                 return true;
             }
         }
@@ -410,6 +440,11 @@ public class PlayerClimbing : MonoBehaviour
             }
         }
     }
+
+    private void Vault()
+    {
+
+    }
     IEnumerator StartClimbingCor()
     {
         
@@ -458,7 +493,6 @@ public class PlayerClimbing : MonoBehaviour
         }
         else
         {
-            if (_fsaf) return;
             startRay = origin.position + limbForwardTran.forward * 0.15f;
             limbRay = new Ray(startRay, limbForwardTran.right);
             Debug.DrawRay(startRay, limbForwardTran.right, Color.green);

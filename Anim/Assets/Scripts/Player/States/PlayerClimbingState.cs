@@ -49,6 +49,7 @@ public class PlayerClimbingState : PlayerState
     {
 
         base.SetUpState(context);
+        _context.playerClimbing.OnFoundFloor += Vault;
          _horizontalClimb = 0f;
          _verticalClimb = 0f;
          _diagonalClimbL = 0f;
@@ -332,6 +333,11 @@ public class PlayerClimbingState : PlayerState
     //    Debug.Log("end");
     //    _isMoving =false;
     //}
+    private void Vault(Vector3 pos)
+    {
+        _context.playerClimbing.OnFoundFloor -= Vault;
+        PlayerVaultingState.SetAsCurrentState(_context.getState(typeof(PlayerVaultingState)), _context, pos);
+    }
     public static void SetAsCurrentState(PlayerState state, PlayerContext context)
     {
         (state as PlayerClimbingState).SetUpState(context);
