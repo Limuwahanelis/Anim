@@ -1,13 +1,17 @@
+using RPGCharacterAnims.Actions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using UnityEngine.UIElements;
+using static UnityEngine.UI.Image;
 
-// przesuwanie helper do kraw?dzi. Robienie promienia z barku w stron? forwardu gracza.
+// TO DO calculate distance between target and limb and move targt if its too far
+// TO DO adjust ik at corners
 
 public class PlayerClimbing : MonoBehaviour
 {
@@ -474,7 +478,7 @@ public class PlayerClimbing : MonoBehaviour
         _playerRig.weight = 1;
         InitHelper();
     }
-    private void CastRayForLimb(Transform origin,float addedHeight,Transform limbForwardTran ,out Vector3 hitpoint,out float currentHitDistance,out Vector3 hitNormal,out bool gotCastHit)
+    private void CastRayForLimb(Transform origin, float addedHeight, Transform limbForwardTran, out Vector3 hitpoint, out float currentHitDistance, out Vector3 hitNormal, out bool gotCastHit)
     {
         hitNormal = Vector3.zero;
         gotCastHit = false;
@@ -482,10 +486,10 @@ public class PlayerClimbing : MonoBehaviour
         currentHitDistance = 0;
         //Vector3 startRay = origin.position - (_player.rotation*new Vector3(0, 0, addedHeight));
         //Vector3 startRay = origin.position - (limbForwardTran.rotation* new Vector3(0, 0, addedHeight));
-        
-        Vector3 startRay = origin.position - limbForwardTran.forward* addedHeight;
-        Ray limbRay = new Ray(startRay, limbForwardTran.forward/2);
-        Debug.DrawRay(startRay, limbForwardTran.forward/2, Color.red);
+
+        Vector3 startRay = origin.position - limbForwardTran.forward * addedHeight;
+        Ray limbRay = new Ray(startRay, limbForwardTran.forward / 2);
+        Debug.DrawRay(startRay, limbForwardTran.forward / 2, Color.red);
         RaycastHit hit;
         if (Physics.Raycast(limbRay, out hit, _checkDistance, _climbingMask))
         {
@@ -497,37 +501,37 @@ public class PlayerClimbing : MonoBehaviour
         else
         {
             startRay = origin.position + limbForwardTran.forward * 0.15f;
-            limbRay = new Ray(startRay, limbForwardTran.right);
-            Debug.DrawRay(startRay, limbForwardTran.right, Color.green);
-            if (Physics.Raycast(limbRay, out hit, _checkDistance, _climbingMask))
-            {
-                hitNormal = hit.normal;
-                hitpoint = hit.point;
-                currentHitDistance = hit.distance + addedHeight;
-                gotCastHit = true;
-            }
+            if (CheckLimbRay(startRay, limbForwardTran.right, out hitpoint, out currentHitDistance, out hitNormal, out gotCastHit)) return;
+            if (CheckLimbRay(startRay, -limbForwardTran.right, out hitpoint, out currentHitDistance, out hitNormal, out gotCastHit)) return;
+            if (CheckLimbRay(startRay, limbForwardTran.up, out hitpoint, out currentHitDistance, out hitNormal, out gotCastHit)) return;
+            if (CheckLimbRay(startRay, -limbForwardTran.up, out hitpoint, out currentHitDistance, out hitNormal, out gotCastHit)) return;
             else
             {
-                limbRay = new Ray(startRay, -limbForwardTran.right);
-                Debug.DrawRay(startRay, limbForwardTran.right, Color.green);
-                if (Physics.Raycast(limbRay, out hit, _checkDistance, _climbingMask))
-                {
-                    hitNormal = hit.normal;
-                    hitpoint = hit.point;
-                    currentHitDistance = hit.distance + addedHeight;
-                    gotCastHit = true;
-                }
-                else
-                {
-                    hitNormal = Vector3.zero;
-                    gotCastHit = false;
-                    hitpoint = origin.position;
-                    currentHitDistance = 0;
-                }
+                hitNormal = Vector3.zero;
+                gotCastHit = false;
+                hitpoint = origin.position;
+                currentHitDistance = 0;
             }
         }
     }
-
+    private bool CheckLimbRay(Vector3 rayStart,Vector3 rayDirection,out Vector3 hitpoint, out float currentHitDistance, out Vector3 hitNormal, out bool gotCastHit)
+    {
+        hitNormal = Vector3.zero;
+        gotCastHit = false;
+        hitpoint = rayStart;
+        currentHitDistance = 0;
+        Ray limbRay = new Ray(rayStart, rayDirection);
+        Debug.DrawRay(rayStart, rayDirection, Color.green);
+        if (Physics.Raycast(limbRay, out hit, _checkDistance, _climbingMask))
+        {
+            hitNormal = hit.normal;
+            hitpoint = hit.point;
+            currentHitDistance = hit.distance + addedHeight;
+            gotCastHit = true;
+            return true;
+        }
+        return false;
+    }
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawLine(_bodyCheck.position, _bodyCheck.position + _bodyCheck.forward * _checkLength);
