@@ -7,7 +7,7 @@ public class PlayerJumpingOnWallToClimb : PlayerState
     float _timeToWait = 0.2f;
     float _time = 0f;
     bool _fired;
-    public PlayerJumpingOnWallToClimb() : base()
+    public PlayerJumpingOnWallToClimb(GetState function) : base(function)
     {
 
     }
@@ -35,14 +35,15 @@ public class PlayerJumpingOnWallToClimb : PlayerState
     }
     private void MoveToClimbingState()
     {
-        PlayerClimbingState.SetAsCurrentState(_context.getState(typeof(PlayerClimbingState)), _context);
+        PlayerClimbingState.SetAsCurrentState( _context);
     }
     public override void InterruptState()
     {
         _context.playerClimbing.OnStartClimbing -= MoveToClimbingState;
     }
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    public static void SetAsCurrentState(PlayerContext context)
     {
+        PlayerState state = _getType(typeof(PlayerJumpingOnWallToClimb));
         (state as PlayerJumpingOnWallToClimb).SetUpState(context);
         state.ChangeCurrentState();
     }

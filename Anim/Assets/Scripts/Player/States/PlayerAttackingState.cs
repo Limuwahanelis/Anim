@@ -21,7 +21,7 @@ public class PlayerAttackingState : PlayerState
     float _accelerationSpeedZ = 3f;
     float animSpeedZ = 0;
     Coroutine _transitionCor;
-    public PlayerAttackingState() : base()
+    public PlayerAttackingState(GetState function) : base(function)
     {
         
     }
@@ -62,7 +62,7 @@ public class PlayerAttackingState : PlayerState
         }
         else
         {
-            if (_timer >= _attackLength / _attackSpeed)  NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+            if (_timer >= _attackLength / _attackSpeed)  NormalPlayerState.SetAsCurrentState( _context);
         }
         _timer += Time.deltaTime;
 
@@ -116,7 +116,7 @@ public class PlayerAttackingState : PlayerState
     }
     public override void Dash()
     {
-        PlayerFastRunState.SetAsCurrentState(_context.getState(typeof(PlayerFastRunState)), _context);
+        PlayerFastRunState.SetAsCurrentState(_context);
     }
     IEnumerator transitionCor()
     {
@@ -130,10 +130,11 @@ public class PlayerAttackingState : PlayerState
             yield return null;
         }
         _context.anim.SetLayerWeight(_combatAnimLayer, 0);
-        NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+        NormalPlayerState.SetAsCurrentState(_context);
     }
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    public static void SetAsCurrentState(PlayerContext context)
     {
+        PlayerState state = _getType(typeof(PlayerAttackingState));
         (state as PlayerAttackingState).SetUpState(context);
         state.ChangeCurrentState();
     }

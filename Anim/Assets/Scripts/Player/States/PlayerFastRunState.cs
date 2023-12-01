@@ -13,7 +13,7 @@ public class PlayerFastRunState : PlayerState
     float animSpeedZ = 0;
     Vector2 _previousDirection = Vector2.zero;
     bool _isMoving;
-    public PlayerFastRunState() : base()
+    public PlayerFastRunState(GetState function) : base(function)
     {
 
     }
@@ -40,7 +40,7 @@ public class PlayerFastRunState : PlayerState
         {
             _context.anim.SetTrigger("Stop_Run");
             _context.anim.SetFloat("SpeedZ", 0);
-            NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+            NormalPlayerState.SetAsCurrentState( _context);
             return;
         }
 
@@ -78,13 +78,13 @@ public class PlayerFastRunState : PlayerState
         if(_context.staminaBar.CurrentStamina<=0)
         {
             _context.anim.SetTrigger("Normal_Run");
-            NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+            NormalPlayerState.SetAsCurrentState(_context);
         }
         _runTime += Time.deltaTime;
     }
     public override void Jump()
     {
-        _context.ChangePlayerState(new PlayerJumpingState(_context,_isMoving));
+        PlayerJumpingState.SetAsCurrentState(_context, _isMoving);
     }
 
     public override void InterruptState()
@@ -94,11 +94,12 @@ public class PlayerFastRunState : PlayerState
     public override void Attack()
     {
         _context.anim.SetTrigger("Normal_Run");
-        PlayerAttackingState.SetAsCurrentState(_context.getState(typeof(PlayerAttackingState)), _context);
+        PlayerAttackingState.SetAsCurrentState( _context);
     }
 
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    public static void SetAsCurrentState(PlayerContext context)
     {
+        PlayerState state = _getType(typeof(PlayerFallingState));
         (state as PlayerFastRunState).SetUpState(context);
         state.ChangeCurrentState();
     }

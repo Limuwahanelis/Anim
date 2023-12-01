@@ -28,7 +28,7 @@ public class PlayerClimbingState : PlayerState
     Vector2 _normalClimb = Vector2.zero;
     Vector2 _diagonalDirection = Vector2.zero;
     Vector2 _moveVector = Vector2.zero;
-    public PlayerClimbingState() : base()
+    public PlayerClimbingState(GetState function) : base(function)
     {
 
     }
@@ -204,7 +204,7 @@ public class PlayerClimbingState : PlayerState
     public override void Drop()
     {
         _context.playerClimbing.StopClimbing();
-        NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+        NormalPlayerState.SetAsCurrentState(_context);
         return;
     }
     private void ChangeAnimationAccordingToLastDirection()
@@ -212,7 +212,7 @@ public class PlayerClimbingState : PlayerState
         bool any = false;
         if (_context.playerChecks.IsNearGroundFromClimb)
         {
-            NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)),_context);
+            NormalPlayerState.SetAsCurrentState(_context);
             return;
         }
         _moveVector = Vector2.zero;
@@ -318,28 +318,14 @@ public class PlayerClimbingState : PlayerState
             //_context.playerClimbing.Climb(_moveVector);
         }
     }
-    //private IEnumerator ClimbCor(Vector2 direction)
-    //{
-    //    if (_isMoving) yield break;
-    //    Debug.Log("start");
-    //    _isMoving = true;
-    //    float _traveledDistance = 0f;
-    //    while(_traveledDistance < _distance)
-    //    {
-    //        _context.playerClimbing.Climb(direction);
-    //        _traveledDistance+=_context.playerMovement.ClimbSpeed*Time.deltaTime;
-    //        yield return null;
-    //    }
-    //    Debug.Log("end");
-    //    _isMoving =false;
-    //}
     private void Vault(Vector3 pos)
     {
         _context.playerClimbing.OnFoundFloor -= Vault;
-        PlayerVaultingState.SetAsCurrentState(_context.getState(typeof(PlayerVaultingState)), _context, pos);
+        PlayerVaultingState.SetAsCurrentState( _context, pos);
     }
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    public static void SetAsCurrentState(PlayerContext context)
     {
+        PlayerState state = _getType(typeof(PlayerClimbingState));
         (state as PlayerClimbingState).SetUpState(context);
         state.ChangeCurrentState();
     }

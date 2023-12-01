@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerStopClimbingState : PlayerState
 {
-    public PlayerStopClimbingState() : base()
+    public PlayerStopClimbingState(GetState function) : base(function)
     {
 
     }
@@ -13,12 +13,12 @@ public class PlayerStopClimbingState : PlayerState
         if (!_context.playerChecks.IsTouchingGround)
         {
             _context.anim.SetBool("IsFalling", true);
-            PlayerFallingState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+            PlayerFallingState.SetAsCurrentState( _context);
         }
         else
         {
             _context.anim.SetBool("IsOnGround", true);
-            NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+            NormalPlayerState.SetAsCurrentState( _context);
 
         }
     }
@@ -32,8 +32,9 @@ public class PlayerStopClimbingState : PlayerState
     {
 
     }
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    public static void SetAsCurrentState( PlayerContext context)
     {
+        PlayerState state = _getType(typeof(PlayerStopClimbingState));
         (state as PlayerStopClimbingState).SetUpState(context);
         state.ChangeCurrentState();
     }

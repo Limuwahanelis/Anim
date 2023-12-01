@@ -6,7 +6,7 @@ public class PlayerFallingState : PlayerState
 {
     float _landingTime = 0f;
     bool _touchedGround = false;
-    public PlayerFallingState() : base()
+    public PlayerFallingState(GetState function) : base(function)
     {
 
     }
@@ -26,7 +26,7 @@ public class PlayerFallingState : PlayerState
         }
         if(_landingTime>=0.1f)
         {
-            NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+            NormalPlayerState.SetAsCurrentState( _context);
         }
         
     }
@@ -52,11 +52,12 @@ public class PlayerFallingState : PlayerState
             _context.anim.SetBool("IsFalling", false);
             _context.anim.SetBool("Start_Climb", true);
             _context.playerClimbing.StartClimbingFromAir();
-            PlayerClimbingState.SetAsCurrentState(_context.getState(typeof(PlayerClimbingState)), _context);
+            PlayerClimbingState.SetAsCurrentState( _context);
         }
     }
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context)
+    public static void SetAsCurrentState(PlayerContext context)
     {
+        PlayerState state = _getType(typeof(PlayerFallingState));
         (state as PlayerFallingState).SetUpState(context);
         state.ChangeCurrentState();
     }

@@ -476,6 +476,7 @@ public class PlayerClimbing : MonoBehaviour
         OnStartClimbing?.Invoke();
         _RHIKWallTouch.weight = 0;
         _playerRig.weight = 1;
+        RotateCharacterLimb();
         InitHelper();
     }
     private void CastRayForLimb(Transform origin, float addedHeight, Transform limbForwardTran, out Vector3 hitpoint, out float currentHitDistance, out Vector3 hitNormal, out bool gotCastHit)

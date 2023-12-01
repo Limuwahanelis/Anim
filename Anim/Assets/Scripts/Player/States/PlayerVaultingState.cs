@@ -10,7 +10,7 @@ public class PlayerVaultingState : PlayerState
     float t = 0;
     float _distance;
     float _speed;
-    public PlayerVaultingState() : base()
+    public PlayerVaultingState(GetState function) : base(function)
     {
 
     }
@@ -19,7 +19,7 @@ public class PlayerVaultingState : PlayerState
 
         _context.playerMovement.SetPosition(Vector3.Lerp(_playerPos, _targetPos, t));
         t+=Time.deltaTime*((Vector3.Distance(_targetPos, _playerPos) / (0.3f/0.7f))/_speed);
-        if (t >= 1) NormalPlayerState.SetAsCurrentState(_context.getState(typeof(NormalPlayerState)), _context);
+        if (t >= 1) NormalPlayerState.SetAsCurrentState( _context);
     }
 
     public void SetUpState(PlayerContext context, Vector3 targetPos)
@@ -42,8 +42,9 @@ public class PlayerVaultingState : PlayerState
         _context.playerMovement.PlayerRB.useGravity = true;
     }
 
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context, Vector3 targetPos)
+    public static void SetAsCurrentState(PlayerContext context, Vector3 targetPos)
     {
+        PlayerState state = _getType(typeof(PlayerVaultingState));
         (state as PlayerVaultingState).SetUpState(context,targetPos);
         state.ChangeCurrentState();
     }

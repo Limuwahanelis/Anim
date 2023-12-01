@@ -6,11 +6,7 @@ public class PlayerJumpingState : PlayerState
 {
     bool _jumped = false;
     bool _isMoving;
-    public PlayerJumpingState(PlayerContext context,bool isMoving) : base(context)
-    {
-        
-    }
-    public PlayerJumpingState() : base()
+    public PlayerJumpingState(GetState function) : base(function)
     {
 
     }
@@ -18,7 +14,7 @@ public class PlayerJumpingState : PlayerState
     {
         if (!_context.playerChecks.IsTouchingGround && _jumped)
         {
-            PlayerFallingState.SetAsCurrentState(_context.getState(typeof(PlayerFallingState)), _context);
+            PlayerFallingState.SetAsCurrentState( _context);
         }
     }
     public override void SetUpState(PlayerContext context)
@@ -40,8 +36,9 @@ public class PlayerJumpingState : PlayerState
     {
         
     }
-    public static void SetAsCurrentState(PlayerState state, PlayerContext context, bool isMoving)
+    public static void SetAsCurrentState(PlayerContext context, bool isMoving)
     {
+        PlayerState state = _getType(typeof(PlayerJumpingState));
         (state as PlayerJumpingState).SetUpState(context,isMoving);
         state.ChangeCurrentState();
     }
