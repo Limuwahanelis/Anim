@@ -142,7 +142,10 @@ public class PlayerClimbing : MonoBehaviour
         _spineHelper.name = "climb_spine_helper";
         _headHelper.name = "climb_head_helper";
         _helper.position = transform.position;
+        _helper.rotation = transform.rotation;
         _headHelper.position = _helper.position + _helper.up * _headHelperOffsetFromFeet;
+        _spineHelper.position = _headHelper.position;
+        _spineHelper.rotation = _helper.rotation;
     }
 
     public void Climb(Vector2 direction)
@@ -370,7 +373,7 @@ public class PlayerClimbing : MonoBehaviour
             t = 0;
             _isLerping = false;
         }
-        _playerMovement.PlayerRB.rotation=Quaternion.identity;
+        _playerMovement.PlayerRB.rotation = Quaternion.LookRotation(transform.forward, Vector3.up);
         _lastClimbingDirection = Vector2.zero;
         _playerMovement.PlayerRB.isKinematic = false;
         _playerRig.weight = 0;
