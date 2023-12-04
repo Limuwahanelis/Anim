@@ -58,7 +58,6 @@ public class SlopeDetection : MonoBehaviour
             Vector3 cross = Vector3.Cross(hitFront.normal, transform.up).normalized;
             float dot = Vector3.Dot(cross, transform.forward);
            angle = (dot >= 0 ? (1 - dot) : (1 + dot)) * rawAngle;
-            
             _floorNormal = hitFront.normal;
         }
        // Debug.Log(rawAngle);

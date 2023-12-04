@@ -18,19 +18,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] float _climbSpeed=2f;
     public float ClimbSpeed => _climbSpeed;
     [SerializeField] float _rotationSpeed = 5f;
-    [SerializeField] float _combatMovementSpeed;
-    [SerializeField] float _combatBackMovementSpeed;
     [SerializeField] float _runSpeed;
     [SerializeField] float _walkSpeed;
     [SerializeField] float _fastRunSpeed;
     [SerializeField] float _pullTowardsFloorSpeed;
-    [SerializeField] float _stepMoveTime;
-    [SerializeField] float _stepSpeed;
     [SerializeField] Rigidbody _rb;
     [SerializeField] PlayerChecks _playerChecks;
     [SerializeField] StepDetection _stepDetection;
     [SerializeField] PlayerFootsIK _footIK;
-
     public Rigidbody PlayerRB => _rb;
     [SerializeField] Ringhandle _jumphandle;
     [SerializeField] Camera _cam;
@@ -38,10 +33,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Transform _playerController;
     [SerializeField] Transform _playerBody;
     public Transform PlayerBody => _playerBody;
-    private float _rotationAngle;
-
     private bool _isRotating;
-    private Vector3 _prevPos;
     // Start is called before the first frame update
     void Start()
     {
@@ -59,18 +51,6 @@ public class PlayerMovement : MonoBehaviour
         if (isMoving) _rb.AddForce(_jumphandle.GetVector() * _jumpForce);
         else _rb.AddForce(Vector3.up * _jumpForce/2); ;
 
-    }
-    public void RotatePlayerBack()
-    {
-        _playerController.Rotate(Vector3.up, -_rotationAngle);
-        _rotationAngle = 0;
-    }
-    public void Roll(Vector2 direction)
-    {
-        _rotationAngle =(MathF.Atan2(direction.y, -direction.x) * 180 / Mathf.PI)-90;
-       // if (math.abs(_rotationAngle) == 90) _rotationAngle *= -1;
-        //Debug.Log("x: "+direction.x+" y: "+direction.y +" "+_rotationAngle);
-        _playerController.Rotate(Vector3.up, _rotationAngle);
     }
     public void LandOnGround()
     {
@@ -98,22 +78,11 @@ public class PlayerMovement : MonoBehaviour
         {
             if (direction.x != 0 || direction.y != 0) value = 1;
             moveVector = Quaternion.AngleAxis(_playerChecks.FloorAngle, transform.right) * transform.forward * speed * value;
-            if(_stepDetection.DetectStep(out stepPos))
-            {
-                float speedM = Vector3.Distance(transform.position, stepPos) / _stepMoveTime;
-                Debug.Log(speedM);
-                //transform.position = Vector3.Lerp(transform.position, stepPos, Time.deltaTime * _stepSpeed); // cam't decde which is better
-                //transform.position = Vector3.Lerp(transform.position, stepPos, speedM * Time.deltaTime);
-                //_rb.MovePosition(Vector3.Lerp(transform.position, stepPos, speedM*Time.deltaTime));
-                _rb.MovePosition(stepPos);
-                
-            }
-            
+            if(_stepDetection.DetectStep(out stepPos)) _rb.MovePosition(stepPos);
         }
         _footIK.UpdateIK();
         if (_playerChecks.IsNearGround && !_playerChecks.IsTouchingGround) moveVector -= _playerChecks.GetFloorNormal() * _pullTowardsFloorSpeed;
         _rb.velocity = moveVector;
-        _prevPos =transform.position;
     }
 
     public void SetPosition(Vector3 position)
@@ -149,9 +118,5 @@ public class PlayerMovement : MonoBehaviour
         _rb.rotation = Quaternion.RotateTowards(_rb.rotation, targetRot, Time.deltaTime * _rotationSpeed);
         if (Quaternion.Dot(_rb.rotation, targetRot) < 0.98) return true;
         else return false;
-    }
-    private void LateUpdate()
-    {
-
     }
 }

@@ -38457,7 +38457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Effectors:
   - m_Transform: {fileID: 2051216074}
     m_Style:
@@ -42765,6 +42765,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animationController: {fileID: 1215438564}
   _playerMovement: {fileID: 1215438556}
+  _playerVaulting: {fileID: 0}
   _checkForWall: {fileID: 1793357322}
   _playerCamera: {fileID: 330585545}
   _playerChecks: {fileID: 1215438555}
@@ -42840,7 +42841,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 384
   _climbing: {fileID: 1215438563}
-  _headHelperOffsetFromFeet: 1.6
   _rayTowardsMoveDir: 0.24
   _rotateSpeed: 2
   _offsetFromWall: 0.22
