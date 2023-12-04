@@ -25,6 +25,7 @@ public class PlayerClimbingState : PlayerState
     int _lastCycle = 1;
     bool _isBothPressed = true;
     Vector2 _lastDirection = Vector2.zero;
+    Vector2 _currentDirection;
     Vector2 _normalClimb = Vector2.zero;
     Vector2 _diagonalDirection = Vector2.zero;
     Vector2 _moveVector = Vector2.zero;
@@ -74,8 +75,7 @@ public class PlayerClimbingState : PlayerState
     {
 
         _context.playerClimbing.Climb(direction);
-        //_context.playerClimbing.Climb(direction);
-       // bool canMove = _context.playerClimbing.CanMove(direction);
+        _currentDirection = direction;
         _isBothPressed = true;
         _lastCycle = _cycleX;
         if (direction.x != 0)
@@ -322,6 +322,10 @@ public class PlayerClimbingState : PlayerState
     {
         _context.playerClimbing.OnFoundFloor -= Vault;
         PlayerVaultingState.SetAsCurrentState( _context, pos);
+    }
+    public override void Jump()
+    {
+        _context.playerClimbing.Jump(_currentDirection);
     }
     public static void SetAsCurrentState(PlayerContext context)
     {

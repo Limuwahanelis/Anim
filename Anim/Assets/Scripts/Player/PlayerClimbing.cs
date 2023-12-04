@@ -96,9 +96,13 @@ public class PlayerClimbing : MonoBehaviour
     Vector3 _targetPos;
     Vector3 _startPos;
     bool _isLerping;
+    int jumpIterations = 0;
+    int climbMovesInJump = 6;
+    Vector2 _jumpDirection;
     float t;
     Vector2 _lastClimbingDirection = Vector2.zero;
 
+    bool _isJumping = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -154,15 +158,25 @@ public class PlayerClimbing : MonoBehaviour
 
     public void Climb(Vector2 direction)
     {
+        if(_isJumping)
+        {
+            Move();
+            if(_isLerping==false)
+            {
+                jumpIterations++;
+                PrepareToMove(_jumpDirection);
+                if(jumpIterations>climbMovesInJump)
+                {
+                    _isJumping = false;
+                    jumpIterations = 0;
+                    _climbSpeed /= 2;
+                }
+            }
+            return;
+        }
         if (Vector2.Dot(direction, _lastClimbingDirection) == -1)
         {
-            Vector3 tmp = _startPos;
-            _startPos = _helper.position;
-            _helper.position = tmp;
-            _helper.rotation = _previousRotation;
-            _targetPos = _helper.position;
-            _lastClimbingDirection = direction;
-            t = 1 - t;
+            MoveInOppositeDirection(direction);
         }
         else if (_lastClimbingDirection != direction && direction!=Vector2.zero)
         {
@@ -171,43 +185,70 @@ public class PlayerClimbing : MonoBehaviour
         }
         if (!_isLerping)
         {
-            Vector3 h = _helper.right * direction.x;
-            Vector3 v = _helper.up * direction.y;
-            Vector3 moveDir = (h + v).normalized;
-            if (direction == Vector2.zero) return;
-            bool canMove = CanMove(moveDir);
-            if (!canMove)  return;
-            _headHelper.position = _helper.position + _helper.up * _headHelperOffsetFromFeet;
-            _headHelper.rotation = _helper.rotation;
-            _spineHelper.position = _helper.position + _helper.up * _spineHelperOffsetFromFeet;
-            _spineHelper.rotation = _helper.rotation;
-            RaycastHit hit;
-            if(Physics.Raycast(_spineHelper.position,_spineHelper.forward,out hit,3f,_climbingMask))
-            {
-                _spineHelper.rotation = Quaternion.LookRotation(-hit.normal);
-            }
-            _lastClimbingDirection = direction;
-            t = 0;
-            _isLerping = true;
-            _previousRotation = _helper.rotation;
-            _startPos = transform.position;
-            _targetPos = _helper.position;
+            PrepareToMove(direction);
         }
         else
         {
-            t += Time.deltaTime * _climbSpeed;
-            if (t > 1)
-            {
-                t = 1;
-                _isLerping = false;
-            }
-            Vector3 cp = Vector3.Lerp(_startPos, _targetPos, t);
-
-            Debug.DrawRay(_player.position - _player.forward, _player.forward * 3f);
-            _playerMovement.PlayerRB.MovePosition(cp);
-            _playerMovement.PlayerRB.rotation = Quaternion.Slerp(_playerMovement.PlayerRB.rotation, _helper.rotation, Time.deltaTime * _rotateSpeed);
-            _spineTarget.rotation = Quaternion.Slerp(_spineTarget.rotation, _spineHelper.rotation, Time.deltaTime);
+            Move();
         }
+    }
+    #region climb
+    private void MoveInOppositeDirection(Vector2 currentDir)
+    {
+        Vector3 tmp = _startPos;
+        _startPos = _helper.position;
+        _helper.position = tmp;
+        _helper.rotation = _previousRotation;
+        _targetPos = _helper.position;
+        _lastClimbingDirection = currentDir;
+        t = 1 - t;
+    }
+    private void PrepareToMove(Vector2 direction)
+    {
+        Vector3 h = _helper.right * direction.x;
+        Vector3 v = _helper.up * direction.y;
+        Vector3 moveDir = (h + v).normalized;
+        if (direction == Vector2.zero) return;
+        bool canMove = CanMove(moveDir);
+        if (!canMove) return;
+        _headHelper.position = _helper.position + _helper.up * _headHelperOffsetFromFeet;
+        _headHelper.rotation = _helper.rotation;
+        _spineHelper.position = _helper.position + _helper.up * _spineHelperOffsetFromFeet;
+        _spineHelper.rotation = _helper.rotation;
+        RaycastHit hit;
+        if (Physics.Raycast(_spineHelper.position, _spineHelper.forward, out hit, 3f, _climbingMask))
+        {
+            _spineHelper.rotation = Quaternion.LookRotation(-hit.normal);
+        }
+        _lastClimbingDirection = direction;
+        t = 0;
+        _isLerping = true;
+        _previousRotation = _helper.rotation;
+        _startPos = transform.position;
+        _targetPos = _helper.position;
+    }
+    private void Move()
+    {
+        t += Time.deltaTime * _climbSpeed;
+        if (t > 1)
+        {
+            t = 1;
+            _isLerping = false;
+        }
+        Vector3 cp = Vector3.Lerp(_startPos, _targetPos, t);
+
+        Debug.DrawRay(_player.position - _player.forward, _player.forward * 3f);
+        _playerMovement.PlayerRB.MovePosition(cp);
+        _playerMovement.PlayerRB.rotation = Quaternion.Slerp(_playerMovement.PlayerRB.rotation, _helper.rotation, Time.deltaTime * _rotateSpeed);
+        _spineTarget.rotation = Quaternion.Slerp(_spineTarget.rotation, _spineHelper.rotation, Time.deltaTime);
+    }
+    #endregion
+    public void Jump(Vector2 direction)
+    {
+        _climbSpeed *= 2;
+        _jumpDirection=direction;
+        PrepareToMove(_jumpDirection);
+        _isJumping = true;
     }
     bool CanMove(Vector3 moveDir)
     {
@@ -220,19 +261,10 @@ public class PlayerClimbing : MonoBehaviour
 
         if (Physics.Raycast(origin, dir, out hit, dis,_climbingMask))// checks if there is wall perpendicualar to us
         {
-            //if (Vector3.Dot(Vector3.up, hit.normal) >= 0.95 && hit.collider.gameObject.layer == )
-            //{
-            //    Debug.Log("Floor");
-            //    return false;
-            //}
             _helper.position = PosWithOffset(origin, hit.point);
             _helper.rotation = Quaternion.LookRotation(-hit.normal);
             return true;
         }
-
-
-
-
 
         Debug.DrawRay(_headHelper.position, _headHelper.forward*0.5f, Color.blue);
         RaycastHit headHelperHit;
@@ -383,11 +415,7 @@ public class PlayerClimbing : MonoBehaviour
         _playerRig.weight = 0;
         _touchWall = 0;
     }
-    public void SetUpLimbs()
-    {
-        if (_isLerping) RotateCharacterLimb();
 
-    }
 
     public bool CheckForClimbFromAir(Vector2 movingDirection)
     {
@@ -425,6 +453,39 @@ public class PlayerClimbing : MonoBehaviour
     {
         _climbingCor = StartCoroutine(StartClimbingCor());
     }
+    IEnumerator StartClimbingCor()
+    {
+
+        _playerMovement.PlayerRB.useGravity = false;
+        _playerMovement.PlayerRB.isKinematic = true;
+        float value = 0;
+        Vector3 startClimbingPos = _startClimbingTran.position;
+        Vector3 pos = transform.position;
+        Vector3 newPos = PosWithOffset(pos, startClimbingPos); //transform.position;
+        Debug.Log(startClimbingPos + " " + newPos);
+        newPos.x = pos.x;
+        while (value < 1f)
+        {
+
+            newPos.y = math.lerp(pos.y, startClimbingPos.y, value);
+            _playerMovement.PlayerRB.Move(newPos, _playerMovement.PlayerRB.rotation);
+
+            value += Time.deltaTime * _startClimbingSpeed;
+            yield return null;
+        }
+        Debug.Log(newPos);
+        OnStartClimbing?.Invoke();
+        _RHIKWallTouch.weight = 0;
+        _playerRig.weight = 1;
+        RotateCharacterLimb();
+        InitHelper();
+    }
+    #region Limbs
+    public void SetUpLimbs()
+    {
+        if (_isLerping) RotateCharacterLimb();
+
+    }
     private void RotateCharacterLimb()
     {
         for(int i=0;i<4;i++)
@@ -447,47 +508,8 @@ public class PlayerClimbing : MonoBehaviour
             }
         }
     }
-
-    private void Vault()
-    {
-
-    }
-    IEnumerator StartClimbingCor()
-    {
-        
-        _playerMovement.PlayerRB.useGravity = false;
-        _playerMovement.PlayerRB.isKinematic = true;
-        float value = 0;
-        Vector3 startClimbingPos = _startClimbingTran.position;
-        Vector3 pos = transform.position;
-        Vector3 newPos = PosWithOffset(pos, startClimbingPos); //transform.position;
-        Debug.Log(startClimbingPos+" "+ newPos);
-        newPos.x = pos.x;
-        while (value < 1f)
-        {
-
-            newPos.y = math.lerp(pos.y, startClimbingPos.y, value);
-            _playerMovement.PlayerRB.Move(newPos, _playerMovement.PlayerRB.rotation);
-            
-            value += Time.deltaTime * _startClimbingSpeed;
-            yield return null;
-        }
-        Debug.Log(newPos);
-        OnStartClimbing?.Invoke();
-        _RHIKWallTouch.weight = 0;
-        _playerRig.weight = 1;
-        RotateCharacterLimb();
-        InitHelper();
-    }
     private void CastRayForLimb(Transform origin, float addedHeight, Transform limbForwardTran, out Vector3 hitpoint, out float currentHitDistance, out Vector3 hitNormal, out bool gotCastHit)
     {
-        hitNormal = Vector3.zero;
-        gotCastHit = false;
-        hitpoint = origin.position;
-        currentHitDistance = 0;
-        //Vector3 startRay = origin.position - (_player.rotation*new Vector3(0, 0, addedHeight));
-        //Vector3 startRay = origin.position - (limbForwardTran.rotation* new Vector3(0, 0, addedHeight));
-
         Vector3 startRay = origin.position - limbForwardTran.forward * addedHeight;
         Ray limbRay = new Ray(startRay, limbForwardTran.forward / 2);
         Debug.DrawRay(startRay, limbForwardTran.forward / 2, Color.red);
@@ -533,6 +555,7 @@ public class PlayerClimbing : MonoBehaviour
         }
         return false;
     }
+    #endregion
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawLine(_bodyCheck.position, _bodyCheck.position + _bodyCheck.forward * _checkLength);
